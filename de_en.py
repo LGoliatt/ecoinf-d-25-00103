@@ -352,6 +352,7 @@ for run in range(0, n_runs):
                 pk=(path+basename+'_'+("%15s"% dataset_name).rjust(15)+
                     '_run_'+str("{:02d}".format(run))+'_'+
                     '_'+samples+'_'+
+                    '_'+'beta'+str("%1.2f"%beta).replace('.','p')+'_'+
                     ("%15s"%target).rjust(15)+'.pkl')
                 pk=pk.replace(' ','_').replace("'","").lower()
                 pk=pk.replace('(','_').replace(")","_").lower()
