@@ -271,7 +271,7 @@ for run in range(0, n_runs):
             samples = str(n_samples_train)+'-'+str(n_samples_test)
 
             for strategy in strategy_list[:1]:
-             for beta in [0.0,0.1, 0.5, 1.0, 1.5, 2.0]:
+cdo             for beta in [0.0,0.1, 0.5, 1.0, 1.5, 2.0]:
                 args=(X_train, y_train, random_seed, beta)
                 
                 def objective_function(x,*args):
