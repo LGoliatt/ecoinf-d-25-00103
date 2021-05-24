@@ -14,11 +14,6 @@ import numpy as np
 import logging
 logging.basicConfig(format='%(levelname)s: %(module)s.%(funcName)s(): %(message)s')
 
-
-def vaf(y_true, y_pred):    
-  y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-  return ( 1 - np.var(y_true - y_pred)/np.var(y_true) )*100
-
 def bias(evaluation, simulation):
     """
     Bias as shown in Gupta in Sorooshian (1998), Toward improved calibration of hydrologic models: 
@@ -568,8 +563,3 @@ def calculate_all_functions(evaluation, simulation):
             result.append((f.__name__, np.nan))
 
     return result
-
-
-def mape(y_true, y_pred):    
-  y_true, y_pred = np.array(y_true).ravel(), np.array(y_pred).ravel()
-  return np.mean(np.abs(y_pred - y_true)/np.abs(y_true))*100

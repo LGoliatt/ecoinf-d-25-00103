@@ -51,7 +51,7 @@ basename='sp_'
 path='./pkl_ankara*'
 pkl_list  = []
 for (k,p) in enumerate(glob.glob(path)):
-    pkl_list += glob.glob(p+'/'+'*.pkl')
+    pkl_list += glob.glob(p+'/'+'ankara*.pkl')
 
 pkl_list.sort()
 A=[]
@@ -139,7 +139,7 @@ C['Dataset'] = [i.replace('Ankara ','') for i in C['Dataset']]
 
 metrics=[
         #'R', 
-        #'R$^2$', 
+        'R$^2$', 
         'WI',
         'RRMSE',
         #'RMSE', #'NDEI', 
@@ -190,15 +190,15 @@ sns.catplot(col='Dataset',
 
 #%%
 anova=[]
-for f,df in C.groupby(['Phase', ]):
+for f,df in C.groupby(['Phase',  ]):
     #df1 = df[df['Estimator']!=ref_estimator]
     df1=df
     for (d,o),df2 in df1.groupby(['Dataset','Output', ]):    
             if f!='TRAIN':
                 print('\n'+'='*80+'\n'+str(d)+' '+str(f)+' '+str(o)+'\n'+'='*80)
-                nam = 'Estimator'
+                nam = 'beta'
                 groups=df2.groupby(nam,)
-                print(df2['Estimator'].unique())
+                print(df2[nam].unique())
                 
                 for m in metrics:
                     #-pl.figure()
@@ -262,13 +262,14 @@ print(p_value_table)
     
 #%%   
 aux=[]
-for (f,d,e,o,), df in C.groupby(['Phase', 'Dataset', 'Estimator','Output',]):
+for (f,d,e,o,b), df in C.groupby(['Phase', 'Dataset', 'Estimator','Output','beta']):
     #print(d,f,e,o,len(df))
     dic={}
     dic['Dataset']=d
     dic['Phase']=f
     dic['Output']=o
     dic['Estimator']=e
+    dic['beta']=b
     for f in metrics:
         dic[f]= fstat(df[f])
     
@@ -307,8 +308,8 @@ for (f,d), df in tbl.groupby(['Phase', 'Dataset',]):
     df['Modeling Phase']=df['Phase']
     df.drop(['Phase',], axis=1)
     #df1=df[['Modeling Phase', 'Dataset', 'Estimator', 'R', 'VAF', 'RMSE (MJ/m$^2$)', 'MAE (MJ/m$^2$)', 'NSE']]
-    df1=df[['Modeling Phase', 'Dataset', 'Estimator', ]+metrics]
-    #df.drop(['Output', 'Dataset', 'Phase'], axis=1, inplace=True)
+    df1=df[['Modeling Phase', 'Dataset', 'Estimator', 'beta']+metrics]
+    #df.drop([ 'Dataset', 'Phase'], axis=1, inplace=True)
     print(df1)
     df_table.append(df1)
 
@@ -329,6 +330,9 @@ for (f,d,o,), df in C.groupby(['Phase', 'Dataset', 'Output',]):
     if f=='TEST':
         #print(df[metrics].columns)
         print(f,d,o)
+        
+        df['Estimator'] = [df.iloc[i]['Estimator']+' ($\\beta = $'+str(df.iloc[i]['beta'])+')' for i in range(len(df))]
+        
         df_estimator=df.groupby(['Estimator'])[metrics].agg(np.mean)
         df_estimator.index=df_estimator.index.values
 
@@ -387,10 +391,12 @@ for (f,d,o,), df in C.groupby(['Phase', 'Dataset', 'Output',]):
 #sys.exit()
 #%%    
 # https://github.com/pog87/PtitPrince/blob/master/RainCloud_Plot.ipynb
+C['Estimator'] = [C.iloc[i]['Estimator']+' ($\\beta = $'+str(C.iloc[i]['beta'])+')' for i in range(len(C))]
 n_estimators = C['Estimator'].unique().shape[0]
 ds=C['Dataset'].unique(); ds.sort()
 hs=C['Estimator'].unique(); hs.sort(); #hs=np.concatenate([hs[hs!=ref_estimator],hs[hs==ref_estimator]])
 #sns.set(font_scale=2.5)
+
 
 for kind in ['bar',]:#'box', 'violin']:
     for m in metrics:
@@ -591,7 +597,8 @@ for (p,e,t,o), df in parameters.groupby(['Phase','Estimator', 'Parameter','Outpu
         kwargs={"linewidth": 1, 'edgecolor':None,}
         g = sns.catplot(x='value', col='Dataset', kind='count', data=df, 
                                                 col_wrap=4,
-                        aspect=0.618, palette=palette_color, **kwargs)
+                        aspect=0.618, #palette=palette_color, 
+                        **kwargs)
         fmtx='%3d'
         g.set_ylabels('Frequency')#(e+': Parameter '+t)            
         g.fig.tight_layout()
@@ -632,7 +639,8 @@ for (p,e,t,o), df in parameters.groupby(['Phase','Estimator', 'Parameter','Outpu
         df['value']=df['value'].astype(float,errors='ignore',)    
         kwargs={"linewidth": 1, 'aspect':0.618,}
         g = sns.catplot(x='value', y='Dataset', kind='box', data=df, notch=0,
-                        orient='h', palette=palette_color, **kwargs, )
+                        orient='h', #palette=palette_color, 
+                        **kwargs, )
         xmin, xmax = g.ax.get_xlim()
         g.ax.set_xlim(left=0, right=xmax)
         #g.ax.set_xlabel(d+' -- '+e+': Parameter '+t, fontsize=16,)
