@@ -673,177 +673,179 @@ for (p,e,t,o), df in parameters.groupby(['Phase','Estimator', 'Parameter','Outpu
 #sys.exit()    
 #%%
 
-# sensitivity analysis
-# https://github.com/SALib/SALib/blob/master/examples/morris/morris.py
+# # sensitivity analysis
+# # https://github.com/SALib/SALib/blob/master/examples/morris/morris.py
 
-from sklearn.linear_model import ElasticNet, Ridge
-from sklearn.svm import SVR
-from sklearn.gaussian_process import GaussianProcessRegressor
-from xgboost import  XGBRegressor
-from util.ELM import  ELMRegressor, ELMRegressor
-from util.MLP import MLPRegressor as MLPR
-from util.RBFNN import RBFNNRegressor, RBFNN
-from util.LSSVR import LSSVR
-
-
-from read_data import *
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.preprocessing import MaxAbsScaler
-
-dataset=read_data_naula(model = 0)
-
-feature_names    = dataset['feature_names'   ]
-X_train          = dataset['X_train'         ]
-X_test           = dataset['X_test'          ]
-y_train          = dataset['y_train'         ]
-y_test           = dataset['y_test'          ]
-n_features       = dataset['n_features'      ]
+# from sklearn.linear_model import ElasticNet, Ridge
+# from sklearn.svm import SVR
+# from sklearn.gaussian_process import GaussianProcessRegressor
+# from xgboost import  XGBRegressor
+# from util.ELM import  ELMRegressor, ELMRegressor
+# from util.MLP import MLPRegressor as MLPR
+# from util.RBFNN import RBFNNRegressor, RBFNN
+# from util.LSSVR import LSSVR
 
 
-v_ref = 'RRMSE'
-v_aux = 'KGE'
-k = -1
-unc_tab=[]
-for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
- if p!='TRAIN':
-  #if e!= ref_estimator:  
-   #if '-FS' in e:
-    #print ('='*80+'\n'+p+' - '+d+' - '+e+' - '+str(o)+'\n'+'='*80+'\n')
+# from read_data import *
+from read_data_ankara import *
+
+# from sklearn.gaussian_process import GaussianProcessRegressor
+# from sklearn.preprocessing import MaxAbsScaler
+
+# dataset=read_data_naula(model = 0)
+
+# feature_names    = dataset['feature_names'   ]
+# X_train          = dataset['X_train'         ]
+# X_test           = dataset['X_test'          ]
+# y_train          = dataset['y_train'         ]
+# y_test           = dataset['y_test'          ]
+# n_features       = dataset['n_features'      ]
+
+
+# v_ref = 'RRMSE'
+# v_aux = 'KGE'
+# k = -1
+# unc_tab=[]
+# for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
+#  if p!='TRAIN':
+#   #if e!= ref_estimator:  
+#    #if '-FS' in e:
+#     #print ('='*80+'\n'+p+' - '+d+' - '+e+' - '+str(o)+'\n'+'='*80+'\n')
     
-    k = df[v_ref].idxmin()
-    aux = df.loc[k] 
-    param = aux['Parameters'].copy()
+#     k = df[v_ref].idxmin()
+#     aux = df.loc[k] 
+#     param = aux['Parameters'].copy()
     
-    X_train_ = pd.DataFrame(data=X_train, columns=feature_names)
-    X_test_  = pd.DataFrame(data=X_test, columns=feature_names)
+#     X_train_ = pd.DataFrame(data=X_train, columns=feature_names)
+#     X_test_  = pd.DataFrame(data=X_test, columns=feature_names)
     
-    if e=='ELM':
-        _alpha = param['l2_penalty']
-        param.pop('l2_penalty')
-        regressor = None if _alpha<1e-4 else Ridge(alpha=_alpha,random_state=aux['Seed'])
-        param['regressor']=regressor
+#     if e=='ELM':
+#         _alpha = param['l2_penalty']
+#         param.pop('l2_penalty')
+#         regressor = None if _alpha<1e-4 else Ridge(alpha=_alpha,random_state=aux['Seed'])
+#         param['regressor']=regressor
     
-    estimators={
-        'SVR':SVR(),
-        'ELM':ELMRegressor(random_state=aux['Seed']),
-        'EN':ElasticNet(),
-        'RBFNN':RBFNNRegressor(),
-        'LSSVR':LSSVR(),
-        'XGB':XGBRegressor(),
-        'GPR':GaussianProcessRegressor(random_state=aux['Seed'], optimizer=None, normalize_y=True),
-        }
+#     estimators={
+#         'SVR':SVR(),
+#         'ELM':ELMRegressor(random_state=aux['Seed']),
+#         'EN':ElasticNet(),
+#         'RBFNN':RBFNNRegressor(),
+#         'LSSVR':LSSVR(),
+#         'XGB':XGBRegressor(),
+#         'GPR':GaussianProcessRegressor(random_state=aux['Seed'], optimizer=None, normalize_y=True),
+#         }
 
-    # pl.figure()
-    # pl.plot(X_test_['$B$']/X_test_['$H$'], aux['y_pred'], 'ro')
-    # pl.plot(X_test_['$B$']/X_test_['$H$'], y_test.T, 'bo')
-    # pl.title(e+' - '+d)
-    # pl.show()
+#     # pl.figure()
+#     # pl.plot(X_test_['$B$']/X_test_['$H$'], aux['y_pred'], 'ro')
+#     # pl.plot(X_test_['$B$']/X_test_['$H$'], y_test.T, 'bo')
+#     # pl.title(e+' - '+d)
+#     # pl.show()
     
-    active_features = aux['Active Variables']
-    active_features = [s.replace(' ','') for s in active_features.split(',')]
+#     active_features = aux['Active Variables']
+#     active_features = [s.replace(' ','') for s in active_features.split(',')]
     
-    X_train_ = X_train_[active_features].values
-    X_test_  = X_test_[active_features].values   
-    n_features = X_train_.shape[1]
+#     X_train_ = X_train_[active_features].values
+#     X_test_  = X_test_[active_features].values   
+#     n_features = X_train_.shape[1]
 
-    #scaler=MaxAbsScaler()
-    #scaler.fit(X_train_)    
-    #X_train_ = scaler.transform(X_train_)
-    #X_test_  = scaler.transform(X_test_)
+#     #scaler=MaxAbsScaler()
+#     #scaler.fit(X_train_)    
+#     #X_train_ = scaler.transform(X_train_)
+#     #X_test_  = scaler.transform(X_test_)
     
     
-    #reg = SVR() if 'SVR' in e else GaussianProcessRegressor(optimizer=None)
-    reg=estimators[e]
+#     #reg = SVR() if 'SVR' in e else GaussianProcessRegressor(optimizer=None)
+#     reg=estimators[e]
 
-    for pr in ['scaler', 'k1']:        
-        if pr in param.keys():
-            param.pop(pr) 
+#     for pr in ['scaler', 'k1']:        
+#         if pr in param.keys():
+#             param.pop(pr) 
     
-    reg.set_params(**param)    
-    reg.fit(X_train_, y_train.T.ravel())
+#     reg.set_params(**param)    
+#     reg.fit(X_train_, y_train.T.ravel())
     
-    n_outcomes=250000
-    data=np.random.uniform( low=X_test_.min(axis=0), high=X_test_.max(axis=0), size=(n_outcomes, X_test_.shape[1]) )
-    #data=np.random.normal( loc=X_test_.mean(axis=0), scale=X_test_.std(axis=0), size=(n_outcomes, X_test_.shape[1]) )
-    predict = reg.predict(data)
-    median = np.median(predict)
-    mad=np.abs(predict - median).mean()
-    uncertainty = 100*mad/median
-    print(e,d, median, mad, n_features, uncertainty/n_features, uncertainty)
-    dc={'Model':e, 'Case':d, 'No. features':n_features, 'Median':median, 
-        'MAD':mad, 'Uncertainty':uncertainty, v_ref:aux[v_ref]}
-    unc_tab.append(dc)
-#%%
-unc_tab = pd.DataFrame(unc_tab)
-fn='uncertainty_table__mc'
-cpt='Caption to be inserted.'
-unc_tab.to_latex(buf=fn+'.tex', index=False, escape=False, label=fn, caption=cpt, column_format='r'*df_table.shape[1], float_format="%.1f")
-print(unc_tab)
+#     n_outcomes=250000
+#     data=np.random.uniform( low=X_test_.min(axis=0), high=X_test_.max(axis=0), size=(n_outcomes, X_test_.shape[1]) )
+#     #data=np.random.normal( loc=X_test_.mean(axis=0), scale=X_test_.std(axis=0), size=(n_outcomes, X_test_.shape[1]) )
+#     predict = reg.predict(data)
+#     median = np.median(predict)
+#     mad=np.abs(predict - median).mean()
+#     uncertainty = 100*mad/median
+#     print(e,d, median, mad, n_features, uncertainty/n_features, uncertainty)
+#     dc={'Model':e, 'Case':d, 'No. features':n_features, 'Median':median, 
+#         'MAD':mad, 'Uncertainty':uncertainty, v_ref:aux[v_ref]}
+#     unc_tab.append(dc)
+# #%%
+# unc_tab = pd.DataFrame(unc_tab)
+# fn='uncertainty_table__mc'
+# cpt='Caption to be inserted.'
+# unc_tab.to_latex(buf=fn+'.tex', index=False, escape=False, label=fn, caption=cpt, column_format='r'*df_table.shape[1], float_format="%.1f")
+# print(unc_tab)
 
-unc_tab=unc_tab[unc_tab['Case']!='Case 1']
-unc_tab.index=[i for i in range(unc_tab.shape[0])]
+# unc_tab=unc_tab[unc_tab['Case']!='Case 1']
+# unc_tab.index=[i for i in range(unc_tab.shape[0])]
 
-unc_tab['case']=['FS' if 'FS' in t else 'C'+s.split(' ')[1] for s,t in zip(unc_tab['Case'],unc_tab['Model'])]
-#unc_tab['case']=['FS' if 'FS' in t else s for s,t in zip(unc_tab['Case'],unc_tab['Model'])]
+# unc_tab['case']=['FS' if 'FS' in t else 'C'+s.split(' ')[1] for s,t in zip(unc_tab['Case'],unc_tab['Model'])]
+# #unc_tab['case']=['FS' if 'FS' in t else s for s,t in zip(unc_tab['Case'],unc_tab['Model'])]
 
-pl.figure(figsize=(4,4))
-p1=sns.relplot(x='Uncertainty', y=v_ref, hue='Model', size='No. features', 
-               #xstyle='Model',
-               sizes=(50, 500),size_norm=(1,len(unc_tab['No. features'].unique())),
-               data=unc_tab)
-for line in range(0,unc_tab.shape[0]):
-     p1.ax.text(unc_tab['Uncertainty'][line]+0, unc_tab[v_ref][line], 
-             unc_tab['case'][line], 
-             horizontalalignment='left', size='medium', color='black', 
-             weight='semibold', rotation=0)
+# pl.figure(figsize=(4,4))
+# p1=sns.relplot(x='Uncertainty', y=v_ref, hue='Model', size='No. features', 
+#                #xstyle='Model',
+#                sizes=(50, 500),size_norm=(1,len(unc_tab['No. features'].unique())),
+#                data=unc_tab)
+# for line in range(0,unc_tab.shape[0]):
+#      p1.ax.text(unc_tab['Uncertainty'][line]+0, unc_tab[v_ref][line], 
+#              unc_tab['case'][line], 
+#              horizontalalignment='left', size='medium', color='black', 
+#              weight='semibold', rotation=0)
      
-fn = basename+'300dpi_comparison_uncertainty_rmse'+'.png'
-fn = re.sub('\^','', re.sub('\$','',fn))
-fn = re.sub('\(','', re.sub('\)','',fn))
-fn = re.sub(' ','_', re.sub('\/','',fn))
-fn = re.sub('\\\\','', re.sub('x.','x',fn))
-fn = re.sub('-','_', re.sub('\/','',fn)).lower()
-fn = fn.lower()
-#print(fn)
-pl.savefig(fn, transparent=True, optimize=True,
-           bbox_inches='tight', 
-           dpi=300)     
-pl.show()
+# fn = basename+'300dpi_comparison_uncertainty_rmse'+'.png'
+# fn = re.sub('\^','', re.sub('\$','',fn))
+# fn = re.sub('\(','', re.sub('\)','',fn))
+# fn = re.sub(' ','_', re.sub('\/','',fn))
+# fn = re.sub('\\\\','', re.sub('x.','x',fn))
+# fn = re.sub('-','_', re.sub('\/','',fn)).lower()
+# fn = fn.lower()
+# #print(fn)
+# pl.savefig(fn, transparent=True, optimize=True,
+#            bbox_inches='tight', 
+#            dpi=300)     
+# pl.show()
 
 
-#sys.exit()    
-#%%
-v_ref = 'RRMSE'
-v_aux = 'KGE'
-k = -1
-unc_tab=[]
-for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
- if p!='TRAIN':
-  #if e!= ref_estimator:  
-   #if '-FS' in e:
-    #print ('='*80+'\n'+p+' - '+d+' - '+e+' - '+str(o)+'\n'+'='*80+'\n')
+# #sys.exit()    
+# #%%
+# v_ref = 'RRMSE'
+# v_aux = 'KGE'
+# k = -1
+# unc_tab=[]
+# for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
+#  if p!='TRAIN':
+#   #if e!= ref_estimator:  
+#    #if '-FS' in e:
+#     #print ('='*80+'\n'+p+' - '+d+' - '+e+' - '+str(o)+'\n'+'='*80+'\n')
     
-    k = df[v_ref].idxmin()
-    aux = df.loc[k] 
+#     k = df[v_ref].idxmin()
+#     aux = df.loc[k] 
     
-    ix=aux['y_pred']>0; unc_p,unc_t = aux['y_pred'][ix], aux['y_true'][ix]
-    unc_e = (np.log10(unc_p) - np.log10(unc_t))
-    unc_m=unc_e.mean()
-    unc_s = np.sqrt(sum((unc_e - unc_m)**2)/(len(unc_e)-1))
-    pei95=fmt(10**(-unc_m-1.96*unc_s))+' to '+fmt(10**(-unc_m+1.96*unc_s))
-    #print(p+' - '+d+' - '+e+' - '+str(o), fmt(unc_m), fmt(unc_s), pei95 )
-    sig = '+' if unc_m > 0 else ''
-    dc={'Model':e, 'Case':d, 'MPE':sig+fmt(unc_m), 'WUB':'$\pm$'+fmt(unc_s), 'PEI95':pei95}
-    unc_tab.append(dc)
+#     ix=aux['y_pred']>0; unc_p,unc_t = aux['y_pred'][ix], aux['y_true'][ix]
+#     unc_e = (np.log10(unc_p) - np.log10(unc_t))
+#     unc_m=unc_e.mean()
+#     unc_s = np.sqrt(sum((unc_e - unc_m)**2)/(len(unc_e)-1))
+#     pei95=fmt(10**(-unc_m-1.96*unc_s))+' to '+fmt(10**(-unc_m+1.96*unc_s))
+#     #print(p+' - '+d+' - '+e+' - '+str(o), fmt(unc_m), fmt(unc_s), pei95 )
+#     sig = '+' if unc_m > 0 else ''
+#     dc={'Model':e, 'Case':d, 'MPE':sig+fmt(unc_m), 'WUB':'$\pm$'+fmt(unc_s), 'PEI95':pei95}
+#     unc_tab.append(dc)
 
 
-unc_tab = pd.DataFrame(unc_tab)
-fn='uncertainty_table__models'
-cpt='Caption to be inserted.'
-unc_tab.to_latex(buf=fn+'.tex', index=False, escape=False, label=fn, caption=cpt, column_format='r'*df_table.shape[1])
-print(unc_tab)
+# unc_tab = pd.DataFrame(unc_tab)
+# fn='uncertainty_table__models'
+# cpt='Caption to be inserted.'
+# unc_tab.to_latex(buf=fn+'.tex', index=False, escape=False, label=fn, caption=cpt, column_format='r'*df_table.shape[1])
+# print(unc_tab)
     
-#sys.exit()
+# #sys.exit()
 #%%
 stations = C['Dataset'].unique()
 stations.sort()

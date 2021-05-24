@@ -17,7 +17,7 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import r2_score, mean_squared_error, max_error, make_scorer
 from scipy.stats import pearsonr
 from hydroeval import nse, kge_c2m
-from util.metrics import kge, agreementindex, rmse, rrmse, kge_non_parametric, mape, mse
+#from util.metrics import kge, agreementindex, rmse, rrmse, kge_non_parametric, mape, mse
 
 import sys
 if not sys.warnoptions:
@@ -41,6 +41,9 @@ def lhsu(xmin,xmax,nsample):
        
    return s
 #%%
+def rmse(predictions, targets):
+    return np.sqrt(((predictions - targets) ** 2).mean())
+
 def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False, 
                     expand_features=False, 
                      ):
@@ -202,18 +205,9 @@ def read_data_xingu(plot=False, kind='lstm', n_steps_in=12):
     #%%
 #-------------------------------------------------------------------------------
 datasets = [
-            #read_data_ankara(variation= 3,station='Ankara', test=0.50),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.40),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.30),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.25),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.20),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.10),
-            #
             read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=False, ),
             read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=False, ),
             read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=False, ),
-            #
-            #read_data_xingu(kind='ml')
            ]     
 
 #%%----------------------------------------------------------------------------   

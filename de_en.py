@@ -17,7 +17,7 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import r2_score, mean_squared_error, max_error, make_scorer
 from scipy.stats import pearsonr
 from hydroeval import  kge, nse
-from util.metrics import agreementindex, rmse, rrmse, kge_non_parametric, mape, mse
+#from util.metrics import agreementindex, rmse, rrmse, kge_non_parametric, mape, mse
 
 from read_data_ankara import *
 
@@ -40,6 +40,9 @@ def lhsu(xmin,xmax,nsample):
        
    return s
 #%%
+def rmse(predictions, targets):
+    return np.sqrt(((predictions - targets) ** 2).mean())
+
 #-------------------------------------------------------------------------------
 def split_sequences_multivariate(sequences, n_steps_in, n_steps_out):
     # split a multivariate sequence into samples
@@ -158,6 +161,7 @@ strategy_list=[
              'rand1bin', 
          ]
 
+plot=False
 n_runs=30
 for run in range(0, n_runs):
     random_seed=run+10
@@ -198,7 +202,7 @@ for run in range(0, n_runs):
             samples = str(n_samples_train)+'-'+str(n_samples_test)
 
             for strategy in strategy_list[:1]:
-cdo             for beta in [0.0,0.1, 0.5, 1.0, 1.5, 2.0]:
+              for beta in [0.0,0.1, 0.5, 1.0, 1.5, 2.0]:
                 args=(X_train, y_train, random_seed, beta)
                 
                 def objective_function(x,*args):
@@ -248,11 +252,11 @@ cdo             for beta in [0.0,0.1, 0.5, 1.0, 1.5, 2.0]:
                           
                 pl.rc('text', usetex=True)
                 pl.rc('font', family='serif',  serif='Times')
-    
-                fig = pl.figure(figsize=[10,4])
-                pl.plot(y_test, 'r-o', y_pred,'b-.o', ms=4); pl.legend(['Observed', 'Predicted'])
-                pl.title(dataset_name+' - '+samples+' - '+strategy+'\n'+'RMSE = '+str(rmse_)+'\n'+'NSE = '+str(nse_)+'\n'+'KGE = '+str(kge_))
-                pl.show()
+                if plot:
+                    fig = pl.figure(figsize=[10,4])
+                    pl.plot(y_test, 'r-o', y_pred,'b-.o', ms=4); pl.legend(['Observed', 'Predicted'])
+                    pl.title(dataset_name+' - '+samples+' - '+strategy+'\n'+'RMSE = '+str(rmse_)+'\n'+'NSE = '+str(nse_)+'\n'+'KGE = '+str(kge_))
+                    pl.show()
                 #
                 #fig = pl.figure(figsize=[8,8])
                 #pl.plot(y_test,y_test, 'r-', y_test,y_pred,'bo')
