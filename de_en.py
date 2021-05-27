@@ -44,90 +44,6 @@ def rmse(predictions, targets):
     return np.sqrt(((predictions - targets) ** 2).mean())
 
 #-------------------------------------------------------------------------------
-def split_sequences_multivariate(sequences, n_steps_in, n_steps_out):
-    # split a multivariate sequence into samples
-	X, y = list(), list()
-	for i in range(len(sequences)):
-		# find the end of this pattern
-		end_ix = i + n_steps_in
-		out_end_ix = end_ix + n_steps_out-1
-		# check if we are beyond the dataset
-		if out_end_ix+1 > len(sequences):
-			break
-		# gather input and output parts of the pattern
-		#seq_x, seq_y = sequences[i:end_ix, :-1], sequences[end_ix-1:out_end_ix, -1]
-		seq_x, seq_y = sequences[i:end_ix, :], sequences[end_ix:out_end_ix+1, -1]
-		X.append(seq_x)
-		y.append(seq_y)
-	return np.array(X), np.array(y)    
-#-------------------------------------------------------------------------------
-def read_data_xingu(plot=False, kind='lstm', n_steps_in=12):
-     
-    filename='./data/xingu.csv'
-    df= pd.read_csv(filename,  delimiter=';')
-    df.index = pd.DatetimeIndex(data=df['data'].values, yearfirst=True)
-    df.drop('data', axis=1, inplace=True)
-    df.sort_index(inplace=True)  
-    df.columns = [i.replace('_','-') for i in df.columns]
-  
-    if plot:
-        pl.rc('text', usetex=True)
-        pl.rc('font', family='serif',  serif='Times')
-        #df=df[df.index<'2012-12-31']
-        pl.figure(figsize=(10,15))
-        for i,group in enumerate(df.columns):
-            pl.subplot(len(df.columns), 1, i+1)
-            df[group].plot(marker='.',fontsize=16,)#pyplot.plot(dataset[group].values)
-            pl.title(group, y=0.5, loc='right')
-            pl.axvline('2012-12-31', color='k')
-            
-        pl.show()
-        
-    target_names=['maxima']
-    variable_names=df.columns.drop(target_names)  
-    
-    X=df[variable_names]
-    y=df[target_names]
-    
-    A,a = split_sequences_multivariate(X.values,n_steps_in,0)
-    b=y[n_steps_in-1::].values
-    
-    n=len(A)-60; 
-    X_train, X_test = A[:n], A[n:]    
-    y_train, y_test = b[:n], b[n:]
-    n_samples, _, n_features = X_train.shape 
-         
-    if kind=='ml':        
-        X_train = np.array([list(X_train[i].T.ravel()) for i in range(len(X_train))])
-        X_test  = np.array([list(X_test[i].T.ravel()) for i in range(len(X_test))])
-        y_train, y_test = y_train, y_test
-        n_samples, n_features = X_train.shape
-        variable_names = ['x_'+str("%3.3d"%(i+1)) for i in range(n_features) ]
- 
-
-    regression_data =  {
-      'task'            : 'forecast',
-      'name'            : 'Xingu',
-      'feature_names'   : np.array(variable_names),
-      'target_names'    : target_names,
-      'n_samples'       : n_samples, 
-      'n_features'      : n_features,
-      'X_train'         : X_train,
-      'X_test'          : X_test,
-      'y_train'         : y_train.T,
-      'y_test'          : y_test.T,      
-      'targets'         : target_names,
-      'true_labels'     : None,
-      'predicted_labels': None,
-      'descriptions'    : 'None',
-      'items'           : None,
-      'reference'       : "https://sci-hub.se/https://link.springer.com/article/10.1007/s12145-020-00528-8",
-      'normalize'       : 'None',
-      'date_range'      : None,
-      }
-    return regression_data
-    #%%
-#-------------------------------------------------------------------------------
 datasets = [
             #read_data_ankara(variation= 3,station='Ankara', test=0.50),
             #read_data_ankara(variation= 3,station='Ankara', test=0.40),
@@ -162,8 +78,8 @@ strategy_list=[
          ]
 
 plot=False
-n_runs=30
-for run in range(0, n_runs):
+n_runs=50
+for run in range(28, n_runs):
     random_seed=run+10
     
     for dataset in datasets:

@@ -59,7 +59,8 @@
     }
 \renewcommand\UrlFont{\color{blue}\rmfamily}
 \usepackage{xcolor}
-
+\usepackage{graphicx} %Loading the package
+\graphicspath{{./img/}} %Setting the graphicspath
 %
 % please place your own definitions here and do not use \def but
 % \newcommand{}{}
@@ -94,7 +95,7 @@ An evolutionary approach with feature engineering  for drought prediction
 %               \email{joao.yamim@engenharia.ufjf.br}           %  \\
 %            \and
           {\large *} L. Goliatt  \at
-              Computational modelling, Federal University of Juiz de Fora, Brazil \\
+              Computational Modelling Program, Federal University of Juiz de Fora, Brazil \\
               \email{leonardo.goliatt@ufjf.edu.br}         %  \\
 }
 
@@ -135,7 +136,28 @@ prediction with a noteworthy application in ungauged catchments.
 The Lasso \cite{tibshirani1996lasso} minimizes the residual sum of squares subject to the sum of the absolute value of the coefficients being less than a constant. Because of the nature of this constraint it tends to produce some coefficients that are exactly 0 and hence gives interpretable models. 
 % Our simulation studies suggest that the lasso enjoys some of the favourable properties of both subset selection and ridge regression. It produces interpretable models like subset selection and exhibits the stability of ridge regression. There is also an interesting relationship with recent work in adaptive function estimation by Donoho and Johnstone. The lasso idea is quite general and can be applied in a variety of statistical models: extensions to generalized regression models and tree-based models are briefly described.
 
+\subsection{Time-series cross-validation}
+
+The use of machine learning models in data from time series requires special care due to their peculiarities. One must choose the test set within a period of time after the training set. Otherwise, some information may leak from the training set to the training set, compromising the learning process of the machine learning model. A more robust solution is to operate similarly to k-fold cross-validation but in a time-ordered way. The figure below illustrates the cross-validation procedure for time series. By training and adjusting the model in training set for each fold and averaging the errors in the test sets, we can obtain an unbiased estimate of the model's performance.
+
+\begin{figure}[!htb]\centering
+\includegraphics[width=0.6\linewidth]{./tscv.png}
+\caption{\label{fig:tscv} Time series cross validation.}
+\end{figure}
+
+
 \subsection{Differential evolution}
+
+Differential Evolution (DE) is a stochastic optimization algorithm, based on a population of solutions, which operates through computational steps similar to those employed by most Evolutionary Algorithms.
+DE is simple and easy to implement, and it has some features such as superior performance in relation to accuracy, convergence speed and robustness, and few control parameters. %(F, Cr and NP).
+
+
+The objective function, to be minimized by the differential evolution, is written as follows:
+\begin{equation}
+ f(x) = \mbox{RMSE}(x) * \left( 1 +  \frac{\beta}{N_{feat}} \sum_{i=1}^{N_{feat}} x_i^{MB}\right) 
+\end{equation}
+The parameter $\beta$ indirectly controls the complexity of the expressions generated for the linear model. From this equation, we observe when $\beta=0$ the resulting expression from the candidate solution is not penalized by its length.
+As $\beta$ increases, expressions with a greater number of terms are more penalized than expressions with few terms. A proper choice of $\beta$ is crucial to balance the accuracy of the expression and the interpretability of the associated prediction model.
 
 
 \section{Computational Experiments}\label{sec:results}
