@@ -76,7 +76,7 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
       'predicted_labels': None,
       'descriptions'    : 'None',
       'items'           : None,
-      'reference'       : "https://doi.org/10.1016/j.ins.2021.02.011",
+      'reference'       : "",
       'normalize'       : 'None',
       'date_range'      : None,
       }

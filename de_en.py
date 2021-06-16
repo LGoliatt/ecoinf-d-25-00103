@@ -8,7 +8,8 @@ import os
 from scipy.optimize import differential_evolution as de
 from sklearn.linear_model import ElasticNet
 from sklearn.model_selection import TimeSeriesSplit, cross_val_score
-
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
 
 from sklearn.linear_model import Ridge, LinearRegression, TweedieRegressor, PoissonRegressor, RANSACRegressor, Lasso, ARDRegression, TheilSenRegressor
 from sklearn.svm import LinearSVR, SVR
@@ -77,9 +78,9 @@ strategy_list=[
              'rand1bin', 
          ]
 
-plot=False
+plot=True
 n_runs=50
-for run in range(28, n_runs):
+for run in range(0, n_runs):
     random_seed=run+10
     
     for dataset in datasets:
@@ -111,8 +112,10 @@ for run in range(28, n_runs):
             
             #print(s)
             #------------------------------------------------------------------
-            lb  = [0.0]*n_features  + [ 1e-6,    0,  ]
-            ub  = [1.0]*n_features  + [ 2e+0,    1,  ]
+            lb  = [0.0]*n_features  + [    1e-6,    0,  ]
+            ub  = [1.0]*n_features  + [    2e+0,    1,  ]
+            #lb  = [0.0]*n_features  + [ 1, 1e-6,    0,  ]
+            #ub  = [1.0]*n_features  + [ 3, 2e+0,    1,  ]
             #------------------------------------------------------------------ 
             feature_names = dataset['feature_names']
             samples = str(n_samples_train)+'-'+str(n_samples_test)
@@ -140,6 +143,7 @@ for run in range(28, n_runs):
                                       #scoring=make_scorer(kge_non_parametric, greater_is_better=True),
                                       #scoring='r2',
                                      )
+                    #model=make_pipeline(PolynomialFeatures(round(x[-3])), model)
                     r=-np.mean(r) * (1 + beta*sum(ft)/n_features) # modulating model complexity
                     return r
     
@@ -156,7 +160,8 @@ for run in range(28, n_runs):
                 ft = [ i>0.5 for i in  z[:n_features] ]
                 model=ElasticNet(l1_ratio=z[-1], alpha=z[-2],random_state=random_seed)
                 model=Lasso(alpha=z[-2],random_state=random_seed)
-                
+                #model=make_pipeline(PolynomialFeatures(round(z[-3])), model)
+
                 y_pred=model.fit(X_train[:,ft], y_train).predict(X_test[:,ft])
                 #%%
                 y_pred = np.array(y_pred)
@@ -182,6 +187,7 @@ for run in range(28, n_runs):
                 s1+= ' - '+"%0.3f"%beta
                 s1+= ' - '+ ', '.join(feature_names[ft])+' -- '
                 s1+= ' '.join(["%1.6f"%i for i in model.coef_])+" | %1.3f"%model.intercept_
+                #s1+= ' '.join(["%1.6f"%i for i in model[model.steps[-1][0]].coef_])+" | %1.3f"%model[model.steps[-1][0]].intercept_
                 print(s1)
 #%%
                 l={
@@ -193,6 +199,7 @@ for run in range(28, n_runs):
                 'ALGO':'DE', 'ALGO_STRATEGY':strategy,
                 'ACTIVE_VAR':ft, 'ACTIVE_VAR_NAMES':feature_names[ft],
                 'MODEL_COEF':model.coef_, 'MODEL_INTERCEPT':model.intercept_,
+                 #'MODEL_COEF':model[model.steps[-1][0]].coef_, 'MODEL_INTERCEPT':model[model.steps[-1][0]].intercept_,
                 'BETA':beta,
                 }
                 
