@@ -11,7 +11,7 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
                     expand_features=False, 
                      ):
      
-    filename='./data/SPI'+str(variation)+'.xlsx'
+    filename='./data/data_ankara/SPI'+str(variation)+'.xlsx'
     data = pd.read_excel(filename, index_col=None, )
     data.columns = [ ' '.join([i.capitalize() for i in d.split(' ')]) for d in data.columns]
     var_to_plot=data.columns

@@ -51,7 +51,7 @@ def read_ankara(spi=3, test=0.25):
 # Recuperação dos dados
 #
 
-dataset = read_ankara(spi=3)
+dataset = read_ankara(spi=12)
 target                          = dataset['targets']
 y_train, y_test                 = dataset['y_train'], dataset['y_test']
 dataset_name, X_train, X_test   = dataset['name'], dataset['X_train'], dataset['X_test']
@@ -148,8 +148,6 @@ for run in range(10):
         res=dual_annealing(objective_function, bounds=list(zip(lb, ub)), args=args, 
                        maxfun=1000, seed=random_seed)
     
-    
-    
     #
     # Recuperação dos melhores modelos
     #
@@ -157,7 +155,16 @@ for run in range(10):
     ft = [ i>0.5 for i in  z[:n_features] ]
     model=SVR(C=z[-2], epsilon=z[-1], gamma=z[-3],
                   tol=1e-6, kernel=find_kernel(round(z[-4])),
-                  max_iter=5000,
+                  max_iter=-1,
                   )    
     y_pred=model.fit(X_train[:,ft], y_train.ravel()).predict(X_test[:,ft])
     plot_model_results(y_test, y_pred)
+    
+    #
+    #
+    #
+    print(feature_names[ft])
+    p=model.get_params(); 
+    [p.pop(i) for i in ('cache_size','degree','coef0','max_iter', 'tol', 'verbose', 'shrinking')]
+    print(p)
+    
