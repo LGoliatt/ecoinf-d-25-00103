@@ -114,7 +114,9 @@ for step in steps:
                           'y_pred':y_pred.values.ravel(),
                           'No. Variables':df['ACTIVE_VAR_NAMES'].shape[0],
                           'Optimizer':df['ALGO'].split(':')[0], #A['ALGO'].iloc[0].split(':')[0],
-                          'Estimator':df['EST_NAME'], 'beta':df['BETA']
+                          'Estimator':df['EST_NAME'], 'beta':df['BETA'],
+                          'Coefficients':df['MODEL_COEF'],
+                          'Intercept':df['MODEL_INTERCEPT'],
                           }
                 C.append(dic)
     
@@ -135,6 +137,7 @@ for step in steps:
 C = pd.DataFrame(C)
 C = C.reindex(sorted(C.columns), axis=1)
 C['Dataset'] = [i.replace('Ankara ','') for i in C['Dataset']]
+C['Dataset'] = [i.replace('S',' S') if i!='SPI-12' else i for i in C['Dataset']]
 #%%
 
 metrics=[
@@ -153,9 +156,21 @@ metrics=[
     
 metrics_max =  ['NSE', 'VAF', 'R', 'Accuracy','R$^2$', 'KGE', 'WI']    
 #%%
+
+sns.set_context('talk')
+
+
 S=[]   
 for (i,j,b), df in C.groupby(['Dataset','Active Variables', 'beta']): 
-    S.append({' Dataset':i, 'Active Variables':j, 'beta':b})
+    dic={' Dataset':i, 'Active Variables':j, 'beta':b}
+    aux=df[df['Phase']=='TEST']
+    for m in metrics:
+        dic[m]=aux[m].values[0]
+        
+    for m in ['No. Variables','Dataset']:
+        dic[m]=aux[m].values[0]
+
+    S.append(dic)
     print('\t',i,'\t','\t',j)
 
 S=pd.DataFrame(S)
@@ -163,8 +178,9 @@ print(S)
 sns.catplot(col='Dataset', 
             #y='RMSE', 
             y='No. Variables',
-            data=C, hue='Phase', kind='bar', x='beta',
-            col_wrap=3,
+            data=S, #hue='Phase', 
+            kind='bar', x='beta',
+            col_wrap=3, palette='Blues_r',
             )
 #%%
 #for (p,e,o), df in C.groupby(['Phase','Estimator', 'Output']):
