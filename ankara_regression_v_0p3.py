@@ -1458,13 +1458,13 @@ for run in range(run0, n_runs):
                 #('RBF'  , lb_rbf, ub_rbf, fun_rbf_fs, args, random_seed,),    # OK
                 #('LSSVR', lb_lss, ub_lss, fun_lss_fs, args, random_seed,),    # OK
                 #('GPR'  , lb_gpr, ub_gpr, fun_gpr_fs, args, random_seed,),    # OK            
-                #('XGB'  , lb_xgb, ub_xgb, fun_xgb_fs, args, random_seed,),    # OK
+                ('XGB'  , lb_xgb, ub_xgb, fun_xgb_fs, args, random_seed,),    # OK
                 #
                 #('RBN'  , lb_rbn, ub_rbn, fun_rbn_fs, args, random_seed,),    # OK
                 #('KNN'  , lb_knn, ub_knn, fun_knn_fs, args, random_seed,),    # OK
                 #('ANN'  , lb_ann, ub_ann, fun_ann_fs, args, random_seed,),    # OK
                 #('MLP'  , lb_mlp, ub_mlp, fun_mlp_fs, args, random_seed,),    # OK
-                #('MARS' ,lb_mars,ub_mars,fun_mars_fs, args, random_seed,),    # OK
+                ('MARS' ,lb_mars,ub_mars,fun_mars_fs, args, random_seed,),    # OK
                 #('SVM'  , lb_svm, ub_svm, fun_svm_fs, args, random_seed,),    # OK
                 #('MCN'  , lb_mcn, ub_mcn, fun_mcn_fs, args, random_seed,),
                 #

@@ -145,7 +145,7 @@ metrics=[
         'R$^2$', 
         'WI',
         'RRMSE',
-        #'RMSE', #'NDEI', 
+        'RMSE', #'NDEI', 
         'MAE', #'Accuracy', 
         'MAPE',
         'NSE', #'LNSE', 
@@ -193,7 +193,7 @@ sns.catplot(col='Dataset',
 
 
 sns.catplot(col='Dataset', 
-            y='RRMSE', 
+            y='RMSE', 
             x='No. Variables',
             data=S, #hue='Phase', 
             kind='boxen', #x='beta',
@@ -978,7 +978,7 @@ colors={}
 for i, j in zip(stations,['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'darkslategray', ]): 
     colors[i]=j
     
-v_ref = 'RRMSE'
+v_ref = 'RMSE'
 v_aux = 'KGE'
 k = -1
 for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
@@ -1015,7 +1015,7 @@ colors={}
 for i, j in zip(stations,['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'darkslategray', ]): 
     colors[i]=j
     
-v_ref = 'RRMSE'
+v_ref = 'RMSE'
 v_aux = 'KGE'
 k = -1
 for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
@@ -1065,7 +1065,7 @@ colors={}
 for i, j in zip(stations,['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'darkslategray', ]): 
     colors[i]=j
     
-v_ref = 'RRMSE'
+v_ref = 'RMSE'
 v_aux = 'KGE'
 k = -1
 
@@ -1524,70 +1524,70 @@ for (p,d,e,o), df in C.groupby(['Phase','Dataset','Estimator','Output']):
         pl.show()
 
 #%%
-kind='box'
-for (p,d,o), df in C.groupby(['Phase','Dataset','Output']):
-  #df = df[df['Estimator']!=ref_estimator]  
-  if p!= 'TRAIN':
-      if len(df)>0:
-        print (p+'\t'+d+'\t\t'+'\t'+str(len(df)))
-        kind='count'
-        kwargs={'edgecolor':"k", 'alpha':0.95, 'dodge':True, 'aspect':1.2, 'legend':None, } if kind=='count' else None
-        g=sns.catplot(x='Active Variables', col='Estimator', hue='Phase', data=df, 
-                               #order=ds, hue_order=hs, 
-                               kind=kind, sharey=False, 
-                               order = df['Active Variables'].value_counts().index,
-                               #col_wrap=2, palette=palette_color_1,
-                               **kwargs,
-                               )                    
-        #g.despine(left=True)
-        #g.ax.legend(title=e)#labels=[e])
-        fmtx='%d'        
-        for ax in g.axes.ravel():
-            xticklabels=[]
-            for xticklabel, patch in zip(ax.get_xticklabels(),ax.patches):
-                print(patch.get_height(), xticklabel)
-                if patch.get_height()>0:
-                    xticklabels.append(xticklabel)
+# kind='box'
+# for (p,d,o), df in C.groupby(['Phase','Dataset','Output']):
+#   #df = df[df['Estimator']!=ref_estimator]  
+#   if p!= 'TRAIN':
+#       if len(df)>0:
+#         print (p+'\t'+d+'\t\t'+'\t'+str(len(df)))
+#         kind='count'
+#         kwargs={'edgecolor':"k", 'alpha':0.95, 'dodge':True, 'aspect':1.2, 'legend':None, } if kind=='count' else None
+#         g=sns.catplot(x='Active Variables', col='Estimator', hue='Phase', data=df, 
+#                                #order=ds, hue_order=hs, 
+#                                kind=kind, sharey=False, 
+#                                order = df['Active Variables'].value_counts().index,
+#                                #col_wrap=2, palette=palette_color_1,
+#                                **kwargs,
+#                                )                    
+#         #g.despine(left=True)
+#         #g.ax.legend(title=e)#labels=[e])
+#         fmtx='%d'        
+#         for ax in g.axes.ravel():
+#             xticklabels=[]
+#             for xticklabel, patch in zip(ax.get_xticklabels(),ax.patches):
+#                 print(patch.get_height(), xticklabel)
+#                 if patch.get_height()>0:
+#                     xticklabels.append(xticklabel)
             
-            ax.set_xticklabels(labels=xticklabels,rotation=90)
-            ax.set_xlabel('Active Features')
-            ax.set_ylabel('Count')
-            if kind=='count':
-                #ax.set_ylim([0, 1.21*ax.get_ylim()[1]])
-                #ax.set_ylim([0, 1.21*ax.get_ylim()[1]])
-                #ax.set_xlabel('Day'); #ax.set_ylabel(m);
-                _h=[]
-                for patch in ax.patches:
-                    _h.append(patch.get_height())
+#             ax.set_xticklabels(labels=xticklabels,rotation=90)
+#             ax.set_xlabel('Active Features')
+#             ax.set_ylabel('Count')
+#             if kind=='count':
+#                 #ax.set_ylim([0, 1.21*ax.get_ylim()[1]])
+#                 #ax.set_ylim([0, 1.21*ax.get_ylim()[1]])
+#                 #ax.set_xlabel('Day'); #ax.set_ylabel(m);
+#                 _h=[]
+#                 for patch in ax.patches:
+#                     _h.append(patch.get_height())
                  
-                _h=np.array(_h)
-                _h=_h[~np.isnan(_h)]
-                _h_max = np.max(_h)
-                for patch in ax.patches:
-                    _h= 0 if np.isnan(patch.get_height()) else patch.get_height()
-                    patch.set_height(_h)                
-                    ax.text(
-                            x=patch.get_x() + patch.get_width()/2., 
-                            #y=1.04*patch.get_height(), 
-                            y=0.02*_h_max+patch.get_height(), 
-                            s=fmtx % patch.get_height() if patch.get_height()>0 else None, 
-                            #fontsize=16, 
-                            color='black', ha='center', 
-                            va='bottom', rotation=90, weight='bold',
-                            )
-            #pl.legend(bbox_to_anchor=(-0.00, 1.2), loc=10, borderaxespad=0., ncol=n_estimators, fontsize=16, ) 
-            #pl.legend(bbox_to_anchor=(0.80, 0.8), loc=10, ncol=n_estimators, borderaxespad=0.,)
-            #pl.legend()
+#                 _h=np.array(_h)
+#                 _h=_h[~np.isnan(_h)]
+#                 _h_max = np.max(_h)
+#                 for patch in ax.patches:
+#                     _h= 0 if np.isnan(patch.get_height()) else patch.get_height()
+#                     patch.set_height(_h)                
+#                     ax.text(
+#                             x=patch.get_x() + patch.get_width()/2., 
+#                             #y=1.04*patch.get_height(), 
+#                             y=0.02*_h_max+patch.get_height(), 
+#                             s=fmtx % patch.get_height() if patch.get_height()>0 else None, 
+#                             #fontsize=16, 
+#                             color='black', ha='center', 
+#                             va='bottom', rotation=90, weight='bold',
+#                             )
+#             #pl.legend(bbox_to_anchor=(-0.00, 1.2), loc=10, borderaxespad=0., ncol=n_estimators, fontsize=16, ) 
+#             #pl.legend(bbox_to_anchor=(0.80, 0.8), loc=10, ncol=n_estimators, borderaxespad=0.,)
+#             #pl.legend()
             
-        fn = basename+'300dpi_active_features_sets'+'_'+e+'__'+kind+'.png'
-        fn = re.sub('\^','', re.sub('\$','',fn))
-        fn = re.sub('\(','', re.sub('\)','',fn))
-        fn = re.sub(' ','_', re.sub('\/','',fn))
-        fn = re.sub('-','_', re.sub('\/','',fn)).lower()
-        #print(fn)
-        pl.savefig(fn,  bbox_inches='tight', dpi=300)
+#         fn = basename+'300dpi_active_features_sets'+'_'+e+'__'+kind+'.png'
+#         fn = re.sub('\^','', re.sub('\$','',fn))
+#         fn = re.sub('\(','', re.sub('\)','',fn))
+#         fn = re.sub(' ','_', re.sub('\/','',fn))
+#         fn = re.sub('-','_', re.sub('\/','',fn)).lower()
+#         #print(fn)
+#         pl.savefig(fn,  bbox_inches='tight', dpi=300)
                 
-        pl.show()
+#         pl.show()
 
 #%%
 for (p,d,e,o), df in C.groupby(['Phase','Dataset','Estimator','Output']):
