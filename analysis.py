@@ -48,7 +48,7 @@ pl.rc('text', usetex=True)
 pl.rc('font', family='serif',  serif='Times')
 #%%-----------------------------------------------------------------------------
 basename='sp_'
-path='./pkl_ankara*'
+path='./pkl_ankara_spi_*'
 pkl_list  = []
 for (k,p) in enumerate(glob.glob(path)):
     pkl_list += glob.glob(p+'/'+'ankara*.pkl')
@@ -172,7 +172,7 @@ for (i,j,b), df in C.groupby(['Dataset','Active Variables', 'beta']):
 
     S.append(dic)
     print('\t',i,'\t','\t',j)
-
+#%%
 S=pd.DataFrame(S)
 print(S)
 sns.catplot(col='Dataset', 
@@ -182,6 +182,24 @@ sns.catplot(col='Dataset',
             kind='bar', x='beta',
             col_wrap=3, palette='Blues_r',
             )
+
+sns.catplot(col='Dataset', 
+            #y='RRMSE', 
+            x='No. Variables',
+            data=S, #hue='Phase', 
+            kind='count', #x='beta',
+            col_wrap=3, palette='Blues_r',#sharey=False,
+            )
+
+
+sns.catplot(col='Dataset', 
+            y='RRMSE', 
+            x='No. Variables',
+            data=S, #hue='Phase', 
+            kind='boxen', #x='beta',
+            col_wrap=3, palette='Blues_r',sharey=False,
+            )
+
 #%%
 #for (p,e,o), df in C.groupby(['Phase','Estimator', 'Output']):
 # if p=='TEST':
@@ -933,6 +951,64 @@ for type_plot in ['taylor', 'target']:
     
 #sys.exit()
 #%%
+from sympy.parsing.sympy_parser import parse_expr
+import sympy as sp
+sp.init_printing()
+
+def replace_symbolic(s):
+
+    rep=[    
+        (' x ','*'),
+        ('Beypazari','x1'),
+        ('Polatli','x2'),
+        ('Kizilca Hamam','x3'),
+        ('Esenboga','x4'),
+        ('Nallihan','x5'),
+        ('Kecioren','x6'),
+    ]
+    
+    for a,b in rep:
+        s=(s.replace(a,b))
+        
+    return s
+
+stations = C['Dataset'].unique()
+stations.sort()
+colors={}
+for i, j in zip(stations,['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'darkslategray', ]): 
+    colors[i]=j
+    
+v_ref = 'RRMSE'
+v_aux = 'KGE'
+k = -1
+for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
+ if p!='TRAIN':
+  #if e!= ref_estimator:  
+   #if '-FS' in e:
+    print ('='*80+'\n'+p+' - '+d+' - '+e+' - '+str(o)+'\n'+'='*80+'\n')
+    
+    k = df[v_ref].idxmin()
+    aux = df.loc[k] 
+    var=aux['Active Variables'].replace(', ',',').split(',')
+    coef=aux['Coefficients']; coef=np.round(coef,6)
+    c0=aux['Intercept']     ; c0=np.round(c0,6)
+    
+    s='('+str(c0)+')'
+    for i in range(len(var)):
+        s+='+('+str(coef[i])+')*('+var[i]+')'
+
+    s=replace_symbolic(s)     
+    print(s)
+    x=sp.var(['x'+str(i) for i in range(1,7)])
+    s=parse_expr(s)
+    for i in range(len(x)):
+        s=s.collect(x[i])
+        
+    #display(s.factor())
+    #display(sp.sqf(s))
+    display(s)
+
+#%%
 stations = C['Dataset'].unique()
 stations.sort()
 colors={}
@@ -954,7 +1030,8 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     ax = sns.regplot(x="y_true", y="y_pred", data=aux, ci=0.95, 
                      line_kws={'color':'black'}, 
                      scatter_kws={'alpha':0.85, 'color':colors[d], 's':100},
-                     label='WI'+' = '+fmt(aux['WI']),
+                     label='R$^2$'+' = '+fmt(aux['R$^2$']),
+                     #label='WI'+' = '+fmt(aux['WI']),
                      #label='R'+' = '+fmt(aux['R']),
                      )
     #ax.set_xscale("log"); ax.set_yscale("log")

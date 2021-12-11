@@ -79,6 +79,7 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
       'reference'       : "",
       'normalize'       : 'None',
       'date_range'      : None,
+      'reference'       : 'https://doi.org/10.1016/j.cageo.2020.104622',
       }
     return regression_data
     #%%
