@@ -112,8 +112,8 @@ for run in range(0, n_runs):
             
             #print(s)
             #------------------------------------------------------------------
-            lb  = [0.0]*n_features  + [    1e-6,    0,  ]
-            ub  = [1.0]*n_features  + [    2e+0,    1,  ]
+            lb  = [0.0]*n_features  + [   1e-6,    0,]
+            ub  = [1.0]*n_features  + [   2e+0,    1,]
             #lb  = [0.0]*n_features  + [ 1, 1e-6,    0,  ]
             #ub  = [1.0]*n_features  + [ 3, 2e+0,    1,  ]
             #------------------------------------------------------------------ 
@@ -144,6 +144,7 @@ for run in range(0, n_runs):
                                       #scoring='r2',
                                      )
                     #model=make_pipeline(PolynomialFeatures(round(x[-3])), model)
+                    #beta=x[-3]
                     r=-np.mean(r) * (1 + beta*sum(ft)/n_features) # modulating model complexity
                     return r
     
@@ -153,13 +154,14 @@ for run in range(0, n_runs):
                              strategy=strategy,
                              init=init, maxiter=200, tol=1e-5,  
                              mutation=0.8,  recombination=0.9, 
-                             disp=False,
+                             disp=False, polish=False,
                              seed=random_seed)
                 
                 z=res['x']
                 ft = [ i>0.5 for i in  z[:n_features] ]
                 model=ElasticNet(l1_ratio=z[-1], alpha=z[-2],random_state=random_seed)
                 model=Lasso(alpha=z[-2],random_state=random_seed)
+                #beta=z[-3]
                 #model=make_pipeline(PolynomialFeatures(round(z[-3])), model)
 
                 y_pred=model.fit(X_train[:,ft], y_train).predict(X_test[:,ft])
@@ -184,8 +186,8 @@ for run in range(0, n_runs):
                 #pl.title(dataset_name+' - '+samples+' - '+strategy+'\n'+'RMSE = '+str(rmse_)+'\n'+'NSE = '+str(nse_)+'\n'+'KGE = '+str(kge_))
                 #pl.show()
                 s1 = "%3d: "%run+dataset_name.ljust(15)+' - '+"%0.3f"%rmse_+' - '+"%0.3f"%nse_
-                s1+= ' - '+"%0.3f"%beta
-                s1+= ' - '+ ', '.join(feature_names[ft])+' -- '
+                s1+= ' >> '+"%0.3f"%beta
+                s1+= ' | '+ ', '.join(feature_names[ft])+' -- '
                 s1+= ' '.join(["%1.6f"%i for i in model.coef_])+" | %1.3f"%model.intercept_
                 #s1+= ' '.join(["%1.6f"%i for i in model[model.steps[-1][0]].coef_])+" | %1.3f"%model[model.steps[-1][0]].intercept_
                 print(s1)

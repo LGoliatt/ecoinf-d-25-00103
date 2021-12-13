@@ -1007,6 +1007,17 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     #display(s.factor())
     #display(sp.sqf(s))
     display(s)
+#%%
+from SALib.sample import saltelli
+from SALib.analyze import sobol
+from SALib.test_functions import Ishigami
+import numpy as np
+
+problem = {
+  'num_vars': len(x),
+  'names': x,
+  'bounds': [[-np.pi, np.pi]]*3
+}
 
 #%%
 stations = C['Dataset'].unique()
