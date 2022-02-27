@@ -52,9 +52,9 @@ def rmse(predictions, targets):
 
 #-------------------------------------------------------------------------------
 datasets = [
-            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=False, ),
+            #read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=False, ),
             read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=False, ),
-            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=False, ),
+            #read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=False, ),
            ]     
 
 #%%
@@ -64,13 +64,41 @@ from keras import backend as K
 from keras.regularizers import l1, l2
 import numpy as np
 
+
+def norm2(x):
+    #x -= K.mean(x, axis=1, keepdims=True)
+    #x = K.l2_normalize(x, axis=1)
+    n=x.shape[1]
+    
+    t=[
+       K.identity(x),       
+       #K.sigmoid(x),
+       #K.prod(x[:,0:1], axis=1,  keepdims=True),
+       #K.pow(x, -1),       
+       ]
+    # for i in range(n):
+    #     j=i+2 if i< n else -1
+    #     t+=[
+    #         K.prod(x[:,i:j], axis=1,  keepdims=True),
+    #         ]
+    #for i in range(n):
+    #    j=i+1 if i< n else -1
+    #    t+=[
+    #        K.pow(K.prod(x[:,i:j], axis=1,  keepdims=True),-1),
+    #        ]
+        
+    return K.concatenate(t, axis=1)
+
+
+ 
 def antirectifier(x):
     #x -= K.mean(x, axis=1, keepdims=True)
     #x = K.l2_normalize(x, axis=1)
     y=K.identity(x)
+    n=x.shape[1]
     t=[
-       K.identity(x),
-       K.sigmoid(x),
+       K.identity(x),       
+       K.sigmoid(x),       
        #K.elu(x),
        #K.relu(x),
        #K.exp(x),
@@ -78,7 +106,7 @@ def antirectifier(x):
        K.cos(x),
        K.tanh(x),
        #K.prod(x, axis=1,  keepdims=True),
-       K.pow(x, +2),
+       #K.pow(x, +2),
        #K.pow(x, -1),
        #K.pow(K.identity(K.prod(x, axis=1,  keepdims=True)), -1),
        #K.relu(-x),
@@ -108,7 +136,9 @@ def lamb(x):
 def build_model(shape, mdl='linear', patience=3):
   
   model = keras.Sequential([
-    keras.layers.Dense(1)
+      keras.layers.Input(shape=shape),
+      keras.layers.Lambda(norm2),
+      keras.layers.Dense(1,kernel_regularizer = l1(0.1))
   ])
 
   if mdl=='linear':
@@ -116,26 +146,91 @@ def build_model(shape, mdl='linear', patience=3):
   
   if mdl=='fe01':
       model = keras.Sequential([
+          keras.layers.Input(shape=shape),
           keras.layers.Lambda(antirectifier),
           keras.experimental.LinearModel(),
       ])
 
   if mdl=='fe02':
       model = keras.Sequential([
+          keras.layers.Input(shape=shape),
           keras.layers.Lambda(antirectifier),
           keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
       ])
+      
   if mdl=='fe03':
       model = keras.Sequential([
+          keras.layers.Input(shape=shape),
           keras.layers.Lambda(antirectifier),
           keras.layers.Dense(64, activation='linear',),
           #keras.layers.Dropout(0.1),
           keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
       ])
 
+  if mdl=='fe04':
+    m2_input_layer = keras.layers.Input(shape=shape),
+    m2_dense_layer_1 = keras.layers.Dense(32, activation='relu')(m2_input_layer)
+    m2_dense_layer_2 = keras.layers.Dense(16, activation='relu')(m2_input_layer)
+    m2_merged_layer = keras.layers.concatenate([m2_dense_layer_1, m2_dense_layer_2], name='Concatenate')
+    m2_final_layer = keras.layers.Dense(1, activation='linear')(m2_merged_layer)
+    model2 = keras.Model(inputs=m2_input_layer, outputs=m2_final_layer, name="Model_2")
+    model2.save_weights("model2_initial_weights.h5")
+    model2.summary()
+    keras.utils.plot_model(model2, 'model2.png', show_shapes=True)
+
+
+
+
+  if mdl=='fe05':
+    left_branch_input = keras.layers.Input(shape=shape, name='Left_input')
+    left_branch_output = keras.layers.Dense(10, activation='linear')(left_branch_input)
+    
+    right_branch_input = keras.layers.Input(shape=shape, name='Right_input')
+    right_branch_output = keras.layers.Dense(10, activation='relu')(right_branch_input)
+    
+    concat = keras.layers.concatenate([left_branch_output, right_branch_output], name='Concatenate')
+    final_model_output = keras.layers.Dense(1, activation='sigmoid')(concat)
+    final_model = keras.Model(inputs=[left_branch_input, right_branch_input], outputs=final_model_output,
+                        name='Final_output')
+    
+    model=final_model
+  
+  if mdl=='fe06':
+      model1 = keras.Sequential([
+          keras.layers.Input(shape=shape),
+          keras.layers.Lambda(antirectifier),
+          keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
+      ])
+      model2 = keras.Sequential([
+          keras.layers.Input(shape=shape),
+          keras.layers.Dense(64, activation='linear',),
+          #keras.layers.Dropout(0.1),
+          keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
+      ])
+      model3 = keras.Sequential([
+          keras.layers.Input(shape=shape),
+          keras.layers.Dense(64, activation='relu',),
+          #keras.layers.Dropout(0.1),
+          keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
+      ])
+      # model4 = keras.Sequential([
+      #     keras.layers.Input(shape=shape),
+      #     keras.layers.Conv1D(kernel_size=5,input_shape=shape),
+      #     keras.layers.Dense(64, activation='linear',),
+      #     #keras.layers.Dropout(0.1),
+      #     keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
+      # ])
+      
+      model = keras.Sequential([
+            keras.layers.Input(shape=shape),
+            keras.layers.concatenate([model1, model2, model3], ),
+            keras.layers.Dense(64, activation='linear'),
+            keras.layers.Dense(1,kernel_regularizer = l1(0.1)),
+        ])
   
   if mdl=='nn':
     model = keras.Sequential([
+      keras.layers.Input(shape=shape),
       keras.layers.Dense(64, activation='linear', input_shape=shape),
       keras.layers.Dropout(0.05),
       keras.layers.Dense(64, activation='linear'),
@@ -154,6 +249,10 @@ def build_model(shape, mdl='linear', patience=3):
                 optimizer=optimizer,
                 metrics=['mse', #'mse'
                          ])
+  
+  dot_img_file = '/tmp/model_1.png'
+  keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True, show_layer_names=False)
+  
   return model
 
 
@@ -161,7 +260,7 @@ def build_model(shape, mdl='linear', patience=3):
 pd.options.display.float_format = '{:.3f}'.format
 
 plot=True
-n_runs=1
+n_runs=10
 for run in range(0, n_runs):
     random_seed=run+10
     
@@ -201,7 +300,7 @@ for run in range(0, n_runs):
                                                                 patience=patience,
                                                                 mode='min')
             
-            model = build_model((X_train.shape[1],), mdl='nn')
+            model = build_model((X_train.shape[1],), mdl='--')
             
             history = model.fit(X_train, y_train, epochs=MAX_EPOCHS,
                                   validation_split=0.15,
@@ -209,9 +308,6 @@ for run in range(0, n_runs):
                                   callbacks=[early_stopping])
             
             #pd.DataFrame(history.history).plot()
-            dot_img_file = '/tmp/model_1.png'
-            keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)            
-            pl.show()
             #%%
             y_pred = model.predict(X_test)
             y_pred = np.array(y_pred)

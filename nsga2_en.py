@@ -205,9 +205,9 @@ def read_data_xingu(plot=False, kind='lstm', n_steps_in=12):
     #%%
 #-------------------------------------------------------------------------------
 datasets = [
-            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=False, ),
-            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=False, ),
-            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=False, ),
+            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, ),
+            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=True, ),
+            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, ),
            ]     
 
 #%%----------------------------------------------------------------------------   

@@ -108,7 +108,7 @@ def model_base_evaluation(x, data_args, estimator_args,
               'Poly'            : PolynomialFeatures(),
              }
   
-  normalizer_dict={0:'None', 1:'MinMax', 2:'MaxAbs', 3:'Standard', 4:'Log', 5:'Quantile Norm.', 6:'Quantile Unif.', 7:'Poly',}
+  normalizer_dict={0:'None', 1:'Poly', 7:'MinMax', 2:'MaxAbs', 3:'Standard', 4:'Log', 5:'Quantile Norm.', 6:'Quantile Unif.',}
   n=normalizer_dict[normalizer_type]
   #
   # transformer
@@ -169,7 +169,7 @@ def model_base_evaluation(x, data_args, estimator_args,
         if task=='regression':
             r= -cross_val_score(model,X_train[:,ft], y_train, cv=cv,scoring=scoring,n_jobs=-1).mean()
         elif task=='forecast':
-            r=cross_val_score(model,X_train[:,ft], y_train, cv=cv, n_jobs=1, scoring=scoring)
+            r=cross_val_score(model,X_train[:,ft], y_train, cv=cv, n_jobs=-1, scoring=scoring)
             r=np.abs(r).mean()
         else:
             sys.exit('Cross-validation does not defined for estimator '+clf_name)
@@ -308,7 +308,7 @@ def fun_xgb_fs(x,*data_args):
   
  
   cr ={0:'reg:squarederror', 1:'reg:logistic', 2:'binary:logistic',}
-  clf = XGBRegressor(random_state=int(random_seed), objective=cr[0], n_jobs=1)
+  clf = XGBRegressor(random_state=int(random_seed), objective=cr[0], n_jobs=-1)
   p={
      'learning_rate'        : int(x[4]*1000)/1000.,
      'n_estimators'         : int(x[5]+0.99), 
@@ -960,7 +960,7 @@ def fun_dt_fs(x,*args):
   cv=KFold(n_splits=n_splits, shuffle=True, random_state=int(random_seed))
   if flag=='eval':
     try:
-        r=cross_val_score(clf,X[:,ft].squeeze(), y, cv=cv, n_jobs=1, scoring=scoring)
+        r=cross_val_score(clf,X[:,ft].squeeze(), y, cv=cv, n_jobs=-1, scoring=scoring)
         r=np.abs(r).mean()
     except:
         r=1e12
@@ -1304,8 +1304,8 @@ datasets = [
 #%%----------------------------------------------------------------------------   
 pd.options.display.float_format = '{:.3f}'.format
 
-pop_size    = 30
-max_iter    = 100
+pop_size    = 20
+max_iter    = 30
 n_splits    = 10
 scoring     = 'neg_mean_squared_error'
 scoring     = 'neg_root_mean_squared_error'
@@ -1344,8 +1344,8 @@ for run in range(run0, n_runs):
             
             print(s)
             #------------------------------------------------------------------
-            lb_en  = [0,    0, 0., 0,     1e-6,    0,              ] + [0.0]*n_features          
-            ub_en  = [0,    0, 1., 4,     2e+0,    1,              ] + [1.0]*n_features
+            lb_en  = [0,    0, 0., 0,        0,    0.0,              ] + [0.0]*n_features          
+            ub_en  = [0,    0, 9., 4,     2e+1,    1.0,              ] + [1.0]*n_features
             #------------------------------------------------------------------ 
             lb_rf  = [0,    0, 0., 0,        1,    1,              ] #+ [0.0]*n_features          
             ub_rf  = [0,    0, 1., 4,      100,   20,              ] #+ [1.0]*n_features
@@ -1363,7 +1363,7 @@ for run in range(run0, n_runs):
             ub_lsv = [0,    0, 1., 4,     1e+4, 1e+2,    1,    ] #+ [1.0]*n_features
             #------------------------------------------------------------------         
             lb_xgb = [0,    0, 0., 0,     1e-6,   10,    1,   0.,  ] #+ [0.0]*n_features
-            ub_xgb = [0,    0, 1., 4,     1e+0,  500,   20, 100.,  ] #+ [1.0]*n_features
+            ub_xgb = [0,    0, 1., 4,     1e+0,  200,   20, 100.,  ] #+ [1.0]*n_features
             #------------------------------------------------------------------         
             lb_gpr = [0,    0, 0., 0,        0, 1e-3, 1e-3, 1e-8,   0, ] #+ [0.0]*n_features
             ub_gpr = [0,    0, 1., 4,        0, 1e+1, 1e+1,   1., 1e2, ] #+ [1.0]*n_features
@@ -1441,14 +1441,14 @@ for run in range(run0, n_runs):
 #                le.fit(y_)
 #                y=le.transform(y_)
 #            else:
-#                y=y_.copy()evo_ml___run_00_british_columbia__day_ahead_ml_____mars_______sga_______________energy_kwh
+#                y=y_.copy()
 #            #---------g---------------------------------------------------------         
             args = (X_train, y_train, X_test, y_test, 'eval', task,  n_splits, 
                     int(random_seed), scoring, target, 
                     n_samples_train, n_samples_test, n_features)
             #------------------------------------------------------------------         
             optimizers=[             
-                ('EN'   ,  lb_en,  ub_en,  fun_en_fs, args, random_seed,),    # OK
+                #('EN'   ,  lb_en,  ub_en,  fun_en_fs, args, random_seed,),    # OK
                 #('KRR'  , lb_krr, ub_krr, fun_krr_fs, args, random_seed,),    # OK
                 #('AB'   ,  lb_ab,  ub_ab,  fun_ab_fs, args, random_seed,),    # OK
                 #('RF'   ,  lb_rf,  ub_rf,  fun_rf_fs, args, random_seed,),    # OK
@@ -1458,13 +1458,13 @@ for run in range(run0, n_runs):
                 #('RBF'  , lb_rbf, ub_rbf, fun_rbf_fs, args, random_seed,),    # OK
                 #('LSSVR', lb_lss, ub_lss, fun_lss_fs, args, random_seed,),    # OK
                 #('GPR'  , lb_gpr, ub_gpr, fun_gpr_fs, args, random_seed,),    # OK            
-                ('XGB'  , lb_xgb, ub_xgb, fun_xgb_fs, args, random_seed,),    # OK
+                #('XGB'  , lb_xgb, ub_xgb, fun_xgb_fs, args, random_seed,),    # OK
                 #
                 #('RBN'  , lb_rbn, ub_rbn, fun_rbn_fs, args, random_seed,),    # OK
                 #('KNN'  , lb_knn, ub_knn, fun_knn_fs, args, random_seed,),    # OK
                 #('ANN'  , lb_ann, ub_ann, fun_ann_fs, args, random_seed,),    # OK
                 #('MLP'  , lb_mlp, ub_mlp, fun_mlp_fs, args, random_seed,),    # OK
-                ('MARS' ,lb_mars,ub_mars,fun_mars_fs, args, random_seed,),    # OK
+                #('MARS' ,lb_mars,ub_mars,fun_mars_fs, args, random_seed,),    # OK
                 #('SVM'  , lb_svm, ub_svm, fun_svm_fs, args, random_seed,),    # OK
                 #('MCN'  , lb_mcn, ub_mcn, fun_mcn_fs, args, random_seed,),
                 #
@@ -1496,13 +1496,13 @@ for run in range(run0, n_runs):
                 #algo = pg.algorithm(pg.de(gen = max_iter, variant = 1, seed=random_seed))
                 #algo = pg.algorithm(pg.pso(gen = max_iter, seed=random_seed))
                 #algo = pg.algorithm(pg.ihs(gen = max_iter*pop_size, seed=random_seed))
-                algo = pg.algorithm(pg.gwo(gen = max_iter, seed=random_seed))
+                #algo = pg.algorithm(pg.gwo(gen = max_iter, seed=random_seed))
                 #algo = pg.algorithm(pg.sea(gen = max_iter, seed=random_seed))
                 #algo = pg.algorithm(pg.sade(gen = max_iter, seed=random_seed))
                 #algo = pg.algorithm(pg.bee_colony(gen = max_iter, seed=random_seed))
                 #algo = pg.algorithm(pg.sga(gen = max_iter, m=0.20, cr=0.95, crossover = "single", mutation = "uniform", seed=random_seed))
                 #algo = pg.algorithm(pg.cmaes(gen = max_iter, force_bounds = True, seed=random_seed, memory=False))
-                #algo = pg.algorithm(pg.xnes(gen = max_iter, memory=False, force_bounds = True, seed=random_seed))
+                algo = pg.algorithm(pg.xnes(gen = max_iter, memory=False, force_bounds = True, seed=random_seed))
                 #algo = pg.algorithm(pg.simulated_annealing(Ts=100., Tf=1e-5, n_T_adj = 100, seed=random_seed))
                 
                 s+='Optimizer                  : '+algo.get_name()+'\n'                
