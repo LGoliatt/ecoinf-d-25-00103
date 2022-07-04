@@ -9,13 +9,11 @@ from hydroeval import  kge, nse
 from sklearn import metrics  
 from sklearn.model_selection import ParameterGrid
 import gmdhpy
-from gmdhpy.gmdh import Regressor as GMDHRegressor
 from gmdhpy.gmdh import MultilayerGMDH
 from pathlib import Path
 import gzip
 import pickle
 
-from read_data_ankara import *
 
 #%%
 program_name = sys.argv[0]
@@ -34,7 +32,8 @@ else:
     run0, n_runs = 0, 5
 
 #%%
-basename='cb_gmdh__'
+from read_data_ankara import *
+basename='spi_gmdh_'
 datasets = [
             #read_cahora_bassa(look_back=7, look_forward=1),
             read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, ),
@@ -43,11 +42,12 @@ datasets = [
            ]
 #%%
 param_grid ={
-    'ref_functions'  : ('linear_cov', ),#'quadratic', 'cubic', 'linear'),
-    'admix_features' : (False, ),#True),
+    #'ref_functions'  : ('linear_cov', 'quadratic', 'cubic', 'linear'),
+    'ref_functions'  : (('linear_cov', 'quadratic', 'cubic', 'linear'),),
+    'admix_features' : (False,),
     'normalize'      : (False,),
-    'l2'             : (0.001,),# 0.01, 0.05, 0.1, 0.5, 0.9, 1.0),
-    'seq_type'       : ('random',),
+    'alpha'             : (0.001,),# 0.01, 0.05, 0.1, 0.5, 0.9, 1.0),
+    #'seq_type'       : ('random',),
     }
 
 pg = ParameterGrid(param_grid)
@@ -60,7 +60,7 @@ for run in range(run0, n_runs):
     
     for dataset in datasets:#[:1]:
         dr=dataset['name'].replace(' ','_').replace("'","").lower()
-        path='./pkl_'+dr+'/'
+        path='./pkl_'+basename+dr+'/'
         path = Path(path)
         path.mkdir(parents=True, exist_ok=True)
         #os.system('mkdir  '+path)
@@ -99,23 +99,23 @@ for run in range(run0, n_runs):
                 #'criterion_type': 'test_bias',
                 'seq_type': 'random',
                 'feature_names': feature_names,
-                'min_best_neurons_count':1, 
+                #'min_best_neurons_count':1, 
                 'criterion_minimum_width':1,
                 'admix_features': True,
-                'max_layer_count':10,
+                'max_layer_count':30,
                 'stop_train_epsilon_condition': 0.0001,
                 'layer_err_criterion': 'top',
                 #'alpha': 0.5,
                 'normalize':False,
-                'l2': 0.1,
+                #'l2': 0.1,
                 'n_jobs': 1
             }
             
             data_pkl=[]
             for p in pg:
-                clf = GMDHRegressor(**params)
-                clf = GMDHRegressor(**p)
-                clf.fit(X_train, y_train, verbose=False)
+                clf = MultilayerGMDH(**params)
+                clf = MultilayerGMDH(**p)
+                clf.fit(X_train, y_train,)
                 #%%
                 # y_pred   = clf.predict(X_test)
                 # rmse, r2 = metrics.mean_squared_error(y_test, y_pred)**.5, metrics.r2_score(y_test, y_pred)
@@ -174,7 +174,7 @@ for run in range(run0, n_runs):
                                  'feature_names':feature_names, 
                                  'estimator':est_name,
                                  'output':target, 'dataset_name':dataset_name,
-                                 'selected_indices':clf.get_selected_features_indices(),
+                                 'selected_indices':clf.get_selected_features(),
                                   'y_test_true':y_test, 'y_test_pred':y_pred,})
                 #%%
             ds_name = dataset_name.replace('/','_').replace("'","").lower()
@@ -193,7 +193,7 @@ for run in range(run0, n_runs):
             pk=pk.replace(' ','_').replace("'","").lower()
             pk=pk.replace('(','_').replace(")","_").lower()
             pk=pk.replace('[','_').replace("]","_").lower()
-            pk=pk.replace('-','_').replace("_","_").lower()
+            #pk=pk.replace('-','_').replace("_","_").lower()
             print(pk)
             pd.DataFrame(data_pkl).to_pickle(pk)
 #%%
