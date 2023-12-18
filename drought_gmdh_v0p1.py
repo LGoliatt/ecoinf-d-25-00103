@@ -115,6 +115,7 @@ for run in range(run0, n_runs):
             for p in pg:
                 clf = MultilayerGMDH(**params)
                 clf = MultilayerGMDH(**p)
+                clf = MultilayerGMDH(ref_functions=('linear_cov', 'quadratic', 'cubic', 'linear'), admix_features=True)
                 clf.fit(X_train, y_train,)
                 #%%
                 # y_pred   = clf.predict(X_test)
