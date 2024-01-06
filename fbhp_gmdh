@@ -1,0 +1,201 @@
+digraph {
+	graph [center=true fontsize=18 label="Multilayered group method of data handling model
+ " labelloc=t]
+	OUTPUT [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+	{
+		"F0
+Beypazari" [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+		"F1
+Polatli" [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+		"F2
+KizilcaHamam" [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+		"F3
+Esenboga" [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+		"F4
+Nallihan" [color="#f89939" fillcolor="#ff9c34" fontcolor=white fontsize=12 rank=same style=filled]
+	}
+	{
+		"layer 0
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 0
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 1
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 1
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 2
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 2
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 3
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 4
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 4
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 5
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 5
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 5
+model 2" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 6
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 6
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 7
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 7
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 8
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 9
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+		"layer 9
+model 1" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	{
+		"layer 10
+model 0" [color="#cde8ef" fillcolor="#cde8ef" fontsize=10 shape=rect style=filled]
+	}
+	"F1
+Polatli" -> "layer 0
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 0
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F1
+Polatli" -> "layer 0
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 0
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 0
+model 0" -> "layer 1
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 1
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 0
+model 1" -> "layer 1
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 1
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 1
+model 1" -> "layer 2
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 2
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 1
+model 0" -> "layer 2
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 2
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 2
+model 0" -> "layer 3
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 2
+model 1" -> "layer 3
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 3
+model 0" -> "layer 4
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 4
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 3
+model 0" -> "layer 4
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 4
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 4
+model 0" -> "layer 5
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F1
+Polatli" -> "layer 5
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 4
+model 1" -> "layer 5
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F1
+Polatli" -> "layer 5
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 4
+model 0" -> "layer 5
+model 2" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 5
+model 2" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 5
+model 0" -> "layer 6
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F1
+Polatli" -> "layer 6
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 5
+model 1" -> "layer 6
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 5
+model 2" -> "layer 6
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 6
+model 1" -> "layer 7
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 7
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 6
+model 0" -> "layer 7
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 7
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 7
+model 0" -> "layer 8
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 7
+model 1" -> "layer 8
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 8
+model 0" -> "layer 9
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F3
+Esenboga" -> "layer 9
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 8
+model 0" -> "layer 9
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"F4
+Nallihan" -> "layer 9
+model 1" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 9
+model 0" -> "layer 10
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 9
+model 1" -> "layer 10
+model 0" [color="#cde8ef" fillcolor="#3499cd" weight=1]
+	"layer 10
+model 0" -> OUTPUT [color="#cde8ef" fillcolor="#3499cd" weight=1]
+}

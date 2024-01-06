@@ -295,7 +295,7 @@ for run in range(0, n_runs):
     
     
                 def callback_function(algorithm):
-                    print(algorithm.nfe)
+                    print(algorithm.nfe,algorithm.population_size,algorithm.problem.nvars)
     
                 class SPI(Problem):
                 
@@ -321,6 +321,11 @@ for run in range(0, n_runs):
                         model=Lasso(alpha=x[-2],
                                          random_state=random_seed, max_iter=5000)
                         cv=TimeSeriesSplit(n_splits=10,)
+                        #print(x)
+                        #print(ft)
+                        if (sum(ft))==0:
+                            return [1e2,1e12]
+                        
                         r=cross_val_score(model,X[k:,ft], y[k:], cv=cv, n_jobs=1,
                                           scoring=make_scorer(rmse, greater_is_better=False),
                                           #scoring=make_scorer(kge_non_parametric, greater_is_better=True),
@@ -331,7 +336,9 @@ for run in range(0, n_runs):
                 
                         
                 algorithm = NSGAII(SPI(lb, ub, args))
-                algorithm.run(5000)#, callback = callback_function)
+                pop_size=300; n_gen=50
+                algorithm.population_size=pop_size
+                algorithm.run(pop_size*n_gen, callback = callback_function)
                 
                 
                 pl.scatter([s.objectives[0] for s in algorithm.result],
