@@ -3,7 +3,6 @@
 import numpy as np
 import matplotlib
 import pandas as pd
-from pandas.core.base import DataError
 import math
 import matplotlib.pyplot as pl
 import scipy as sp
