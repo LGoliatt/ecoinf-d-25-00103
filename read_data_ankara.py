@@ -22,7 +22,7 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
     if plot:
         pl.rc('text', usetex=True)
         pl.rc('font', family='serif',  serif='Times')
-        pl.figure(figsize=(6,4))
+        pl.figure(figsize=(7,9))
         for i,group in enumerate(df.columns):
             pl.subplot(len(df.columns), 1, i+1)
             df[group].iloc[id0].plot(marker='', label='Training')#,fontsize=16,)#pyplot.plot(dataset[group].values)
@@ -31,7 +31,8 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
             pl.xlabel('Year')
             #pl.legend()#(loc=(1.01,0.5))
             pl.ylabel(group)
-            
+
+        pl.savefig('dataset_'+str(variation)+'.png', transparent=True,  bbox_inches='tight', dpi=300)
         pl.show()
 
     target_names=[station]
@@ -126,9 +127,9 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
     
 if __name__ == "__main__":
     datasets = [                 
-            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, ),
-            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=True, ),
-            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, ),
+            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, plot=True, ),
+            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=True, plot=True, ),
+            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, plot=True, ),
             ]
     for D in datasets:
         print('='*80+'\n'+D['name']+'\n'+'='*80)

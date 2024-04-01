@@ -181,6 +181,9 @@ sns.catplot(col='Dataset',
             kind='bar', x='beta',
             col_wrap=3, palette='Blues_r',
             )
+fn='novar_beta.png'
+pl.savefig(fn,  bbox_inches='tight', dpi=300)
+pl.show()
 
 sns.catplot(col='Dataset', 
             #y='RRMSE', 
@@ -189,7 +192,9 @@ sns.catplot(col='Dataset',
             kind='count', #x='beta',
             col_wrap=3, palette='Blues_r',#sharey=False,
             )
-
+fn='novar_bar.png'
+pl.savefig(fn,  bbox_inches='tight', dpi=300)
+pl.show()
 
 sns.catplot(col='Dataset', 
             y='RMSE', 
@@ -198,6 +203,9 @@ sns.catplot(col='Dataset',
             kind='boxen', #x='beta',
             col_wrap=3, palette='Blues_r',sharey=False,
             )
+fn='novar_box.png'
+pl.savefig(fn,  bbox_inches='tight', dpi=300)
+pl.show()
 
 #%%
 #for (p,e,o), df in C.groupby(['Phase','Estimator', 'Output']):
@@ -613,7 +621,8 @@ for (p,d,e,o), df in C.groupby(['Phase','Dataset','Estimator','Output']):
     par['Output']=o
     par['variable'] = [replace_names(i) for i in par['variable'].values]
 
-    parameters = parameters.append(par, sort=True)
+    #parameters = parameters.append(par, sort=True)
+    parameters = pd.concat([parameters,par])
         
 parameters['Parameter']=parameters['variable']
 parameters=parameters[parameters['Parameter']!='regressor'] 
@@ -677,7 +686,7 @@ for (p,e,t,o), df in parameters.groupby(['Phase','Estimator', 'Parameter','Outpu
         xmin, xmax = g.ax.get_xlim()
         g.ax.set_xlim(left=0, right=xmax)
         #g.ax.set_xlabel(d+' -- '+e+': Parameter '+t, fontsize=16,)
-        g.ax.set_xlabel(e+': Parameter '+t, )#fontsize=16,)
+        g.ax.set_xlabel(e+':\n Parameter '+t, )#fontsize=16,)
         g.ax.set_ylabel(d, rotation=90)
         g.ax.set_ylabel(None)#fontsize=16,)
         g.fig.tight_layout()
@@ -698,7 +707,7 @@ for (p,e,t,o), df in parameters.groupby(['Phase','Estimator', 'Parameter','Outpu
     fn = re.sub('-','_', re.sub('\/','',fn)).lower()
     fn = fn.lower()
     #print(fn)
-    pl.savefig(fn, transparent=True, optimize=True,
+    pl.savefig(fn, transparent=True, #
                bbox_inches='tight', 
                dpi=300)
     pl.show()
@@ -840,7 +849,7 @@ from read_data_ankara import *
 # fn = re.sub('-','_', re.sub('\/','',fn)).lower()
 # fn = fn.lower()
 # #print(fn)
-# pl.savefig(fn, transparent=True, optimize=True,
+# pl.savefig(fn, transparent=True, 
 #            bbox_inches='tight', 
 #            dpi=300)     
 # pl.show()
@@ -945,7 +954,7 @@ for type_plot in ['taylor', 'target']:
         fn = re.sub('-','_', re.sub('\/','',fn)).lower()
         fn = fn.lower()
         print(fn)
-        pl.savefig(fn, transparent=True, optimize=True, bbox_inches='tight', dpi=300)        
+        pl.savefig(fn, transparent=True,  bbox_inches='tight', dpi=300)        
         pl.show()
     
 #sys.exit()
@@ -976,11 +985,30 @@ stations.sort()
 colors={}
 for i, j in zip(stations,['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'darkslategray', ]): 
     colors[i]=j
+
+
+st=['Beypazari', 'Polatli', 'Kizilca Hamam', 'Esenboga', 'Nallihan', 'Kecioren']
+
+def count_station(c):
+    n=0
+    for s in st:
+        if s in c:
+            n+=1
+    return n
+
+xx=['x'+str(i) for i in range(1,7)]
+def count_var(c):
+    n=0
+    for s in xx:
+        if s in c:
+            n+=1
+    return n
     
+expr=[]    
 v_ref = 'RMSE'
 v_aux = 'KGE'
 k = -1
-for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
+for (d,e,o,p,), df in C.groupby(['Dataset','Estimator','Output','Phase',]):
  if p!='TRAIN':
   #if e!= ref_estimator:  
    #if '-FS' in e:
@@ -991,6 +1019,7 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     var=aux['Active Variables'].replace(', ',',').split(',')
     coef=aux['Coefficients']; coef=np.round(coef,6)
     c0=aux['Intercept']     ; c0=np.round(c0,6)
+    nstation=count_station(aux['Active Variables'])
     
     s='('+str(c0)+')'
     for i in range(len(var)):
@@ -1003,9 +1032,17 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     for i in range(len(x)):
         s=s.collect(x[i])
         
+    nvar=count_var(s.__str__())
     #display(s.factor())
     #display(sp.sqf(s))
-    display(s)
+    display(s.simplify())    
+    expr.append({'Dataset':d, 'Parameters':e, 'No. terms':len(var),'No. var.':nvar,'RMSE':np.round(aux['RMSE'],3),'Expression':sp.latex(s)})
+
+expr=pd.DataFrame(expr) 
+fn='expressions.tex'
+expr.to_latex(buf=fn, index=False)
+
+sns.scatterplot(x='No. var.', y='RMSE', hue='Dataset', data=expr)
 #%%
 from SALib.sample import saltelli
 from SALib.analyze import sobol
@@ -1063,7 +1100,7 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     fn = re.sub('-','_', re.sub('\/','',fn)).lower()
     fn = fn.lower()
     #print(fn)
-    pl.savefig(fn, transparent=True, optimize=True, bbox_inches='tight', dpi=300)
+    pl.savefig(fn, transparent=True,  bbox_inches='tight', dpi=300)
     
     pl.show()
 #%%
@@ -1129,7 +1166,7 @@ for (d,o,p,), df1 in C.groupby(['Dataset','Output','Phase',]):
         fn = re.sub('-','_', re.sub('\/','',fn)).lower()
         fn = fn.lower()
         #print(fn)
-        pl.savefig(fn, transparent=False, optimize=True, bbox_inches='tight', dpi=300)
+        pl.savefig(fn, transparent=False,  bbox_inches='tight', dpi=300)
         
         pl.show()
 #%%
@@ -1182,7 +1219,7 @@ for (d,o,p,), df1 in C.groupby(['Dataset','Output','Phase',]):
     fn = re.sub('-','_', re.sub('\/','',fn)).lower()
     fn = fn.lower()
     #print(fn)
-    pl.savefig(fn, transparent=False, optimize=True, bbox_inches='tight', dpi=300)
+    pl.savefig(fn, transparent=False,  bbox_inches='tight', dpi=300)
     
     pl.show()
 #%%
@@ -1666,3 +1703,4 @@ for (p,d,e,o), df in C.groupby(['Phase','Dataset','Estimator','Output']):
                 pl.show()
 
 #%%
+

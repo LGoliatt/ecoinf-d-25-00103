@@ -132,8 +132,8 @@ for run in range(0, n_runs):
                     if sum(ft)==0:
                         return 1e12
                     
-                    model=ElasticNet(l1_ratio=x[-1], alpha=x[-2],
-                                     random_state=random_seed, max_iter=5000)
+                    #model=ElasticNet(l1_ratio=x[-1], alpha=x[-2],
+                    #                 random_state=random_seed, max_iter=5000)
                     
                     model=Lasso(alpha=x[-2],
                                      random_state=random_seed, max_iter=5000)
