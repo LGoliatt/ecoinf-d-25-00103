@@ -1036,7 +1036,8 @@ for (d,e,o,p,), df in C.groupby(['Dataset','Estimator','Output','Phase',]):
     #display(s.factor())
     #display(sp.sqf(s))
     display(s.simplify())    
-    expr.append({'Dataset':d, 'Parameters':e, 'No. terms':len(var),'No. var.':nvar,'RMSE':np.round(aux['RMSE'],3),'Expression':sp.latex(s)})
+    expr.append({'Dataset':d, 'Parameters':e, #'No. terms':len(var),
+                 'No. var.':nvar,'RMSE':np.round(aux['RMSE'],3),'Expression':sp.latex(s)})
 
 expr=pd.DataFrame(expr) 
 fn='expressions.tex'
