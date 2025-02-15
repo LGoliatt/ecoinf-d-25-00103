@@ -896,7 +896,7 @@ kolors=['r', 'darkgreen', 'b', 'm', 'c','y', 'olive',  'darkorange', 'brown', 'd
 for i, j in zip(stations,kolors): 
     colors[i]=j
 
-for type_plot in ['taylor', 'target']:
+for type_plot in ['taylor', ]:#'target']:
     for (d,o,p,), df in C.groupby(['Dataset','Output','Phase',]):
      if p!='TRAIN':
       #if e!= ref_estimator:  
