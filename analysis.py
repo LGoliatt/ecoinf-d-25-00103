@@ -1089,9 +1089,10 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     ax.set_title(d+' -- '+e+' ('+p+') '+'\n'+v_ref+' = '+fmt(df[v_ref][k])+', '+v_aux+' = '+fmt(df[v_aux][k]))
     ax.set_xlabel('Measured   '+aux['Output'])
     ax.set_ylabel('Predicted  '+aux['Output'])
-    ax.set_yticklabels(labels=ax.get_yticks(), rotation=0)
-    ax.set_xticklabels(labels=ax.get_xticks(), rotation=0)
-    ax.set_aspect(1)
+    #ax.set_yticklabels(labels=ax.get_yticks(), rotation=0)
+    #ax.set_xticklabels(labels=ax.get_xticks(), rotation=0)
+    ax.set_xlim(left=-2,right=2);ax.set_ylim(bottom=-2,top=2)
+    #ax.set_aspect(1)
     ax.legend(frameon=False, markerscale=0, loc=0)
     fn = basename+'300dpi_scatter'+'_best_model_'+'__'+e+'__'+d+'__'+p+'.png'
     fn = re.sub('\^','', re.sub('\$','',fn))
@@ -1104,6 +1105,7 @@ for (e,d,o,p,), df in C.groupby(['Estimator','Dataset','Output','Phase',]):
     pl.savefig(fn, transparent=True,  bbox_inches='tight', dpi=300)
     
     pl.show()
+sys.exit()    
 #%%
 # variaton plots, hydrograms
 # https://seaborn.pydata.org/generated/seaborn.lineplot.html
