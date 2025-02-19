@@ -127,9 +127,9 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
     
 if __name__ == "__main__":
     datasets = [                 
-            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, plot=True, ),
-            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=True, plot=True, ),
-            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, plot=True, ),
+            read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=False, plot=True, ),
+            read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=False, plot=True, ),
+            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=False, plot=True, ),
             ]
     for D in datasets:
         print('='*80+'\n'+D['name']+'\n'+'='*80)
