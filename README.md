@@ -1,1 +1,1 @@
-Interpretable Drought Modeling for Resilient Resource Management: an Evolutionary Polynomial Approach
+Evolutionary Polynomial Modeling for Interpretable Drought Prediction and Resilient Resource Management
