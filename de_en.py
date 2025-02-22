@@ -18,7 +18,6 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import r2_score, mean_squared_error, max_error, make_scorer
 from scipy.stats import pearsonr
 from hydroeval import  kge, nse
-#from util.metrics import agreementindex, rmse, rrmse, kge_non_parametric, mape, mse
 
 from read_data_ankara import *
 
@@ -31,7 +30,6 @@ if not sys.warnoptions:
 basename='ankara__'
 #-------------------------------------------------------------------------------
 
-#%%
 def lhsu(xmin,xmax,nsample):
    nvar=len(xmin); ran=np.random.rand(nsample,nvar); s=np.zeros((nsample,nvar));
    for j in range(nvar):
@@ -40,24 +38,15 @@ def lhsu(xmin,xmax,nsample):
        s[:,j] = xmin[j] + P*(xmax[j]-xmin[j]);
        
    return s
-#%%
+
 def rmse(predictions, targets):
     return np.sqrt(((predictions - targets) ** 2).mean())
 
 #-------------------------------------------------------------------------------
-datasets = [
-            #read_data_ankara(variation= 3,station='Ankara', test=0.50),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.40),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.30),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.25),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.20),
-            #read_data_ankara(variation= 3,station='Ankara', test=0.10),
-            #
+datasets = [           
             read_data_ankara(variation= 3,station='Ankara', test=0.25, expand_features=True, ),
             read_data_ankara(variation= 6,station='Ankara', test=0.25, expand_features=True, ),
-            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, ),
-            #
-            #read_data_xingu(kind='ml')
+            read_data_ankara(variation=12,station='Ankara', test=0.25, expand_features=True, ),           
            ]     
 
 #%%----------------------------------------------------------------------------   
@@ -113,9 +102,7 @@ for run in range(0, n_runs):
             #print(s)
             #------------------------------------------------------------------
             lb  = [0.0]*n_features  + [   1e-6,    0,]
-            ub  = [1.0]*n_features  + [   2e+0,    1,]
-            #lb  = [0.0]*n_features  + [ 1, 1e-6,    0,  ]
-            #ub  = [1.0]*n_features  + [ 3, 2e+0,    1,  ]
+            ub  = [1.0]*n_features  + [   2e+0,    1,]           
             #------------------------------------------------------------------ 
             feature_names = dataset['feature_names']
             samples = str(n_samples_train)+'-'+str(n_samples_test)
@@ -132,20 +119,13 @@ for run in range(0, n_runs):
                     if sum(ft)==0:
                         return 1e12
                     
-                    #model=ElasticNet(l1_ratio=x[-1], alpha=x[-2],
-                    #                 random_state=random_seed, max_iter=5000)
-                    
                     model=Lasso(alpha=x[-2],
                                      random_state=random_seed, max_iter=5000)
                     cv=TimeSeriesSplit(n_splits=10,)
                     r=cross_val_score(model,X[k:,ft], y[k:], cv=cv, n_jobs=1,
-                                      scoring=make_scorer(rmse, greater_is_better=False),
-                                      #scoring=make_scorer(kge_non_parametric, greater_is_better=True),
-                                      #scoring='r2',
+                                      scoring=make_scorer(rmse, greater_is_better=False),                                     
                                      )
-                    #model=make_pipeline(PolynomialFeatures(round(x[-3])), model)
-                    #beta=x[-3]
-                    r=-np.mean(r) * (1 + beta*sum(ft)/n_features) # modulating model complexity
+                   r=-np.mean(r) * (1 + beta*sum(ft)/n_features) # modulating model complexity
                     return r
     
                 np.random.seed(random_seed)
@@ -161,9 +141,7 @@ for run in range(0, n_runs):
                 ft = [ i>0.5 for i in  z[:n_features] ]
                 model=ElasticNet(l1_ratio=z[-1], alpha=z[-2],random_state=random_seed)
                 model=Lasso(alpha=z[-2],random_state=random_seed)
-                #beta=z[-3]
-                #model=make_pipeline(PolynomialFeatures(round(z[-3])), model)
-
+                
                 y_pred=model.fit(X_train[:,ft], y_train).predict(X_test[:,ft])
                 #%%
                 y_pred = np.array(y_pred)
@@ -181,15 +159,10 @@ for run in range(0, n_runs):
                     pl.title(dataset_name+' - '+samples+' - '+strategy+'\n'+'RMSE = '+str(rmse_)+'\n'+'NSE = '+str(nse_)+'\n'+'KGE = '+str(kge_))
                     pl.show()
                 #
-                #fig = pl.figure(figsize=[8,8])
-                #pl.plot(y_test,y_test, 'r-', y_test,y_pred,'bo')
-                #pl.title(dataset_name+' - '+samples+' - '+strategy+'\n'+'RMSE = '+str(rmse_)+'\n'+'NSE = '+str(nse_)+'\n'+'KGE = '+str(kge_))
-                #pl.show()
                 s1 = "%3d: "%run+dataset_name.ljust(15)+' - '+"%0.3f"%rmse_+' - '+"%0.3f"%nse_
                 s1+= ' >> '+"%0.3f"%beta
                 s1+= ' | '+ ', '.join(feature_names[ft])+' -- '
                 s1+= ' '.join(["%1.6f"%i for i in model.coef_])+" | %1.3f"%model.intercept_
-                #s1+= ' '.join(["%1.6f"%i for i in model[model.steps[-1][0]].coef_])+" | %1.3f"%model[model.steps[-1][0]].intercept_
                 print(s1)
 #%%
                 l={
@@ -201,7 +174,6 @@ for run in range(0, n_runs):
                 'ALGO':'DE', 'ALGO_STRATEGY':strategy,
                 'ACTIVE_VAR':ft, 'ACTIVE_VAR_NAMES':feature_names[ft],
                 'MODEL_COEF':model.coef_, 'MODEL_INTERCEPT':model.intercept_,
-                 #'MODEL_COEF':model[model.steps[-1][0]].coef_, 'MODEL_INTERCEPT':model[model.steps[-1][0]].intercept_,
                 'BETA':beta,
                 }
                 
