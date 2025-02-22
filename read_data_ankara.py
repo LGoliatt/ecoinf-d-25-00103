@@ -41,57 +41,22 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
     X=data[variable_names]
     y=data[target_names]
 
-    # if expand_features:
-    #     for i in range(len(variable_names)):
-    #         for j in range(i,len(variable_names)):
-    #             a, b = variable_names[i], variable_names[j]
-    #             if a!=b:
-    #                 s=str(a)+str(' x ')+str(b)
-    #                 X[s] = X[a]*X[b]
-    #                 s=str(a)+str(' / ')+str(b)
-    #                 X[s] = X[a]/X[b]
-    #                 s=str(b)+str(' / ')+str(a)
-    #                 X[s] = X[b]/X[a]
-                
-    #     variable_names = X.columns
     var_names=variable_names
     if expand_features:
             for i in range(len(var_names)):
                 a = var_names[i]
-                #s='log('+str(a)+')'
-                #X[s] = np.log10(X[a])
-                #s='exp('+str(a)+')'
-                #X[s] = np.exp(X[a])
-                #s='sin('+str(a)+')'
-                #X[s] = np.sin(X[a])
-                #s='cosexp('+str(a)+')'
-                #X[s] = np.cos(np.exp(X[a]))
-                #s='sig('+str(a)+')'
-                #X[s] = 1/(1+np.exp(X[a]))
-                #s='xsig('+str(a)+')'
-                #X[s] = X[a]/(1+np.exp(X[a]))
-                #s='sqrt('+str(a)+')'
-                #X[s] = np.sqrt((X[a]))
+               
                 for j in range(i,len(var_names)):
                     b = var_names[j]
                     if a!=b:
                         s=str(a)+str(' * ')+str(b)
                         X[s] = X[a]*X[b]
-                        #--
-                        #s=str(a)+str(' ** ')+str(b)
-                        #X[s] = X[a]**X[b]
-                        #s=str(b)+str(' ** ')+str(a)
-                        #X[s] = X[b]**X[a]
-                        #--
+                        
                         s=str(a)+str(' / ')+str(b)
                         X[s] = X[a]/X[b]
                         s=str(b)+str(' / ')+str(a)
                         X[s] = X[b]/X[a]
-                        #--
-                        #s=str(a)+' * sin('+str(b)+')'
-                        #X[s] = X[a]*np.sin(X[b])
-                        #s=str(b)+str(' * sin(')+str(a)+')'
-                        #X[s] = X[b]*np.sin(X[a])
+                        
                         
     variable_names = X.columns       
         

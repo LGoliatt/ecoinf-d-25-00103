@@ -121,17 +121,7 @@ for step in steps:
     
 
 #%%
-#            
-#df              = pd.read_csv('./references/reference_tayfur.csv', delimiter=';')
-#ref_estimator   = df['Estimator'].unique()[0]
-#df['Run']       = 30
-#
-#for i in range(len(df)):
-#    aux = dic.copy()
-#    for c in df:
-#        aux[c] =  df.iloc[i][c]
-#    
-#    C.append(aux)
+
         
 C = pd.DataFrame(C)
 C = C.reindex(sorted(C.columns), axis=1)
