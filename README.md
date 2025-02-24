@@ -1,6 +1,3 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/aimclub/open-source-ops/7de1e1321389ec177f236d0a5f41f876811a912a/badges/ITMO_badge.svg" align="center" width="20%">
-</p>
 <p align="center"><h1 align="center">ECOINF-D-25-00103</h1></p>
 
 ## Overview
@@ -14,25 +11,25 @@ Key functionalities include scripts for data handling, automated processes for e
 
 The repository **ecoinf-d-25-00103** is designed to facilitate the analysis of drought prediction through a structured codebase that integrates various components, each playing a crucial role in supporting the project's functionality. Here’s an overview of the key components and their interrelations:
 
-### 1. **Databases
+1. **Databases**
 While the repository does not explicitly mention databases, it likely interacts with datasets that contain historical climate data and other environmental factors. These datasets serve as the foundation for the analysis, providing the necessary information to understand drought conditions. The data is essential for feeding algorithms that identify patterns and relationships among different environmental variables.
 
-### 2. **Models
+2. **Models**
 The core of the project revolves around predictive models that analyze co-occurrence patterns in environmental data. These models utilize statistical methods to derive insights about drought prediction. By processing the datasets, the models help in identifying key predictors of drought occurrences, thereby contributing to a deeper understanding of environmental dynamics. The models are designed to reflect the methodologies outlined in the associated research, ensuring that the analysis is grounded in established scientific principles.
 
-### 3. **Scripts for Data Reading and Processing
+3. **Scripts for Data Reading and Processing**
 The repository includes scripts dedicated to reading and processing the datasets. These scripts are vital for transforming raw data into a format suitable for analysis. They ensure that the data is clean, organized, and ready for the models to interpret. This preprocessing step is crucial as it directly impacts the accuracy and reliability of the predictive outcomes.
 
-### 4. **Makefile
+4. **Makefile**
 The presence of a makefile indicates a structured approach to build automation within the project. This component streamlines the process of compiling and executing the various scripts and models, ensuring that all dependencies are managed efficiently. The makefile enhances the usability of the codebase, allowing users to easily run analyses without needing to manually execute each script.
 
-### 5. **Shell Script
+5. **Shell Script**
 A shell script is included to facilitate the updating of the repository. This component plays a supportive role by ensuring that the codebase remains current and that any changes or improvements can be easily integrated. It helps maintain the integrity of the project over time, allowing for continuous development and refinement.
 
-### 6. **RIS File
+6. **RIS File**
 The inclusion of a RIS file suggests that the project integrates bibliographic data, which enhances the research context of the analysis. This component allows users to reference existing literature, grounding the project in established research and providing a framework for understanding the significance of the findings. It emphasizes the project's commitment to academic rigor and relevance.
 
-### Interrelation of Components
+**Interrelation of Components**
 These components interrelate to create a cohesive system for analyzing drought prediction. The datasets provide the raw material for the models, which are informed by the methodologies referenced in the RIS file. The scripts facilitate the processing of this data, while the makefile and shell script ensure that the project remains organized and up-to-date. Together, they form a systematic approach to tackling critical environmental challenges through data-driven insights, ultimately contributing to better understanding and management of drought conditions.
 
 
