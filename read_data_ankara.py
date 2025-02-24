@@ -11,6 +11,24 @@ def read_data_ankara(variation=12, station='Ankara', test=0.25, plot=False,
                     expand_features=False, 
                      ):
      
+    """
+Reads and processes data from an Excel file for a specified station and variation.
+
+    This method reads data from an Excel file, processes it by renaming columns, and optionally plots the training and test data. 
+    It also allows for feature expansion by creating interaction terms between features. The processed data is then split into training 
+    and test sets, which are returned in a structured format.
+
+    Args:
+        variation (int, optional): The variation number to specify which dataset to read. Defaults to 12.
+        station (str, optional): The name of the station for which data is being read. Defaults to 'Ankara'.
+        test (float, optional): The proportion of data to be used for testing. Defaults to 0.25.
+        plot (bool, optional): If True, generates plots for training and test data. Defaults to False.
+        expand_features (bool, optional): If True, creates additional features by multiplying and dividing existing features. Defaults to False.
+
+    Returns:
+        dict: A dictionary containing the processed regression data, including training and test sets, feature names, and other metadata.
+    """
+     
     filename='./data/data_ankara/SPI'+str(variation)+'.xlsx'
     data = pd.read_excel(filename, index_col=None, )
     data.columns = [ ' '.join([i.capitalize() for i in d.split(' ')]) for d in data.columns]
