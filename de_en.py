@@ -31,6 +31,22 @@ basename='ankara__'
 #-------------------------------------------------------------------------------
 
 def lhsu(xmin,xmax,nsample):
+   """
+Generates a Latin Hypercube Sample (LHS) within specified bounds.
+
+    This method creates a Latin Hypercube Sample by generating random samples 
+    within the provided minimum and maximum bounds for each variable. The 
+    resulting samples are uniformly distributed across the specified ranges.
+
+    Args:
+        xmin (list or array-like): A list or array of minimum values for each variable.
+        xmax (list or array-like): A list or array of maximum values for each variable.
+        nsample (int): The number of samples to generate.
+
+    Returns:
+        None: This method does not return a value. Instead, it modifies the 
+        internal state or outputs the generated samples directly.
+    """
    nvar=len(xmin); ran=np.random.rand(nsample,nvar); s=np.zeros((nsample,nvar));
    for j in range(nvar):
        idx=np.random.permutation(nsample)
@@ -40,6 +56,19 @@ def lhsu(xmin,xmax,nsample):
    return s
 
 def rmse(predictions, targets):
+    """
+Calculate the Root Mean Square Error (RMSE) between predictions and targets.
+
+    This method computes the RMSE, which is a measure of the differences between predicted values and actual values. 
+    It is commonly used to evaluate the accuracy of a predictive model.
+
+    Args:
+        predictions (numpy.ndarray): An array of predicted values.
+        targets (numpy.ndarray): An array of actual target values.
+
+    Returns:
+        None: This function does not return a value; it performs the RMSE calculation.
+    """
     return np.sqrt(((predictions - targets) ** 2).mean())
 
 #-------------------------------------------------------------------------------
